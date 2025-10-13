@@ -1,0 +1,157 @@
+import { useState, useEffect } from 'react';
+import { useAuth } from '../contexts/AuthContext';
+import { useTranslation } from '../hooks/useTranslation';
+import { Calendar } from 'lucide-react';
+import { loadCSVFile, parseShiftData, parseWHData } from '../lib/csvService';
+import ShiftCalendar from '../components/ShiftCalendar';
+import WHTable from '../components/WHTable';
+import type { ShiftData, WHData } from '../lib/csvTypes';
+
+interface Month {
+  name: string;
+  year: number;
+}
+
+const MONTHS = [
+  'January', 'February', 'March', 'April', 'May', 'June',
+  'July', 'August', 'September', 'October', 'November', 'December'
+];
+
+export function SchedulePage({ countryName }: { countryName: string }) {
+  const { user } = useAuth();
+  const { t } = useTranslation();
+  const [selectedMonth, setSelectedMonth] = useState('September');
+  const [months] = useState(['September', 'October', 'November']);
+  const [dealerShiftData, setDealerShiftData] = useState<ShiftData | null>(null);
+  const [dealerWHData, setDealerWHData] = useState<WHData | null>(null);
+  const [smShiftData, setSMShiftData] = useState<ShiftData | null>(null);
+  const [smWHData, setSMWHData] = useState<WHData | null>(null);
+  const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    loadData();
+  }, [selectedMonth, countryName, user]);
+
+  const loadData = async () => {
+    if (!selectedMonth || !countryName) return;
+
+    setLoading(true);
+
+    try {
+      if (user?.role !== 'sm') {
+        try {
+          const shiftCSV = await loadCSVFile(countryName, 'Dealer_Shift', selectedMonth);
+          setDealerShiftData(parseShiftData(shiftCSV));
+        } catch (err) {
+          console.log('Dealer_Shift not available');
+          setDealerShiftData(null);
+        }
+
+        try {
+          const whCSV = await loadCSVFile(countryName, 'Dealer_WH', selectedMonth);
+          setDealerWHData(parseWHData(whCSV));
+        } catch (err) {
+          console.log('Dealer_WH not available');
+          setDealerWHData(null);
+        }
+      }
+
+      if (user?.role !== 'dealer') {
+        try {
+          const shiftCSV = await loadCSVFile(countryName, 'SM_Shift', selectedMonth);
+          setSMShiftData(parseShiftData(shiftCSV));
+        } catch (err) {
+          console.log('SM_Shift not available');
+          setSMShiftData(null);
+        }
+
+        try {
+          const whCSV = await loadCSVFile(countryName, 'SM_WH', selectedMonth);
+          setSMWHData(parseWHData(whCSV));
+        } catch (err) {
+          console.log('SM_WH not available');
+          setSMWHData(null);
+        }
+      }
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const userFullName = user?.name && user?.surname
+    ? `${user.name} ${user.surname}`
+    : undefined;
+
+  return (
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-4">
+          <Calendar className="w-6 h-6 text-[#FFA500]" />
+          <h1 className="text-2xl font-bold text-gray-900">{t('nav.schedule')}</h1>
+        </div>
+
+        <div className="flex gap-2">
+          {months.map((month) => (
+            <button
+              key={month}
+              onClick={() => setSelectedMonth(month)}
+              className={`px-4 py-2 rounded-lg transition-colors ${
+                selectedMonth === month
+                  ? 'bg-[#FFA500] text-white'
+                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+              }`}
+            >
+              {month}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {loading ? (
+        <div className="bg-white rounded-lg border border-gray-200 p-8 text-center">
+          <div className="w-12 h-12 border-4 border-[#FFA500] border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading schedule...</p>
+        </div>
+      ) : (
+        <div className="space-y-8">
+          {user?.role !== 'sm' && dealerShiftData && (
+            <div className="space-y-4">
+              <h2 className="text-xl font-bold text-gray-900">Dealer Shift Schedule</h2>
+              <ShiftCalendar data={dealerShiftData} userName={user?.role === 'dealer' ? userFullName : undefined} />
+            </div>
+          )}
+
+          {user?.role !== 'sm' && dealerWHData && (
+            <div className="space-y-4">
+              <h2 className="text-xl font-bold text-gray-900">Dealer Working Hours</h2>
+              <WHTable data={dealerWHData} userName={user?.role === 'dealer' ? userFullName : undefined} />
+            </div>
+          )}
+
+          {user?.role !== 'dealer' && smShiftData && (
+            <div className="space-y-4">
+              <h2 className="text-xl font-bold text-gray-900">SM Shift Schedule</h2>
+              <ShiftCalendar data={smShiftData} userName={user?.role === 'sm' ? userFullName : undefined} />
+            </div>
+          )}
+
+          {user?.role !== 'dealer' && smWHData && (
+            <div className="space-y-4">
+              <h2 className="text-xl font-bold text-gray-900">SM Working Hours</h2>
+              <WHTable data={smWHData} userName={user?.role === 'sm' ? userFullName : undefined} />
+            </div>
+          )}
+
+          {!dealerShiftData && !dealerWHData && !smShiftData && !smWHData && (
+            <div className="bg-white rounded-lg border border-gray-200 p-8 text-center">
+              <p className="text-gray-500">No schedule data available for {selectedMonth}</p>
+              <p className="text-sm text-gray-400 mt-2">
+                Upload CSV files to /public/{countryName}/ directory
+              </p>
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
