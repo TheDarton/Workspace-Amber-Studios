@@ -3,6 +3,8 @@ import { Settings, Save, AlertCircle, CheckCircle } from 'lucide-react';
 import {
   getAllVisibleMonthsForCountry,
   setVisibleMonth,
+  getDisplayCount,
+  setDisplayCount,
   AVAILABLE_MONTHS,
   type SectionType,
 } from '../lib/visibleMonthsService';
@@ -29,6 +31,8 @@ export function VisibleMonthsConfig({ countryId, countryName }: VisibleMonthsCon
     month3: '',
   });
 
+  const [displayCount, setDisplayCountState] = useState<1 | 2 | 3>(3);
+
   useEffect(() => {
     loadConfigurations();
   }, [countryId]);
@@ -37,12 +41,15 @@ export function VisibleMonthsConfig({ countryId, countryName }: VisibleMonthsCon
     setLoading(true);
     try {
       const configs = await getAllVisibleMonthsForCountry(countryId);
+      const displayCountValue = await getDisplayCount(countryId);
 
       setConfig({
         month1: configs.schedule[0] || '',
         month2: configs.schedule[1] || '',
         month3: configs.schedule[2] || '',
       });
+
+      setDisplayCountState(displayCountValue as 1 | 2 | 3);
     } catch (error) {
       console.error('Error loading configurations:', error);
       setMessage({ type: 'error', text: 'Failed to load configurations' });
@@ -59,17 +66,14 @@ export function VisibleMonthsConfig({ countryId, countryName }: VisibleMonthsCon
       const sections: SectionType[] = ['schedule', 'mistake_statistics', 'daily_mistakes'];
 
       for (const section of sections) {
-        if (config.month1) {
-          await setVisibleMonth(countryId, section, 1, config.month1);
-        }
-        if (config.month2) {
-          await setVisibleMonth(countryId, section, 2, config.month2);
-        }
-        if (config.month3) {
-          await setVisibleMonth(countryId, section, 3, config.month3);
-        }
+        await setVisibleMonth(countryId, section, 1, config.month1);
+        await setVisibleMonth(countryId, section, 2, config.month2);
+        await setVisibleMonth(countryId, section, 3, config.month3);
       }
 
+      await setDisplayCount(countryId, displayCount);
+
+      await loadConfigurations();
       setMessage({ type: 'success', text: 'Configurations saved successfully for all sections!' });
       setTimeout(() => setMessage(null), 3000);
     } catch (error) {
@@ -137,6 +141,32 @@ export function VisibleMonthsConfig({ countryId, countryName }: VisibleMonthsCon
           <code className="bg-blue-100 px-1 rounded">/public/{countryName}/</code> directory for
           the selected months.
         </p>
+      </div>
+
+      <div className="bg-white rounded-lg border border-gray-200 p-6">
+        <h3 className="text-lg font-semibold text-gray-900 mb-4">
+          Display Options
+        </h3>
+        <p className="text-sm text-gray-600 mb-4">
+          Choose how many month options to display to users. This controls how many month selection buttons users will see in the interface.
+        </p>
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">
+            Number of Month Options to Display
+          </label>
+          <select
+            value={displayCount}
+            onChange={(e) => setDisplayCountState(Number(e.target.value) as 1 | 2 | 3)}
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#FFA500] focus:border-transparent"
+          >
+            <option value={1}>1 Month</option>
+            <option value={2}>2 Months</option>
+            <option value={3}>3 Months</option>
+          </select>
+          <p className="text-xs text-gray-500 mt-2">
+            Users will see the first {displayCount} month{displayCount > 1 ? 's' : ''} from your priority configuration above.
+          </p>
+        </div>
       </div>
 
       <div className="bg-white rounded-lg border border-gray-200 p-6">

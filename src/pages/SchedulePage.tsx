@@ -3,7 +3,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { useTranslation } from '../hooks/useTranslation';
 import { Calendar } from 'lucide-react';
 import { loadCSVFile, parseShiftData, parseWHData } from '../lib/csvService';
-import { getVisibleMonthsForSection } from '../lib/visibleMonthsService';
+import { getVisibleMonthsForSection, getDisplayCount } from '../lib/visibleMonthsService';
 import ShiftCalendar from '../components/ShiftCalendar';
 import WHTable from '../components/WHTable';
 import type { ShiftData, WHData } from '../lib/csvTypes';
@@ -13,6 +13,7 @@ export function SchedulePage({ countryName, countryId }: { countryName: string; 
   const { t } = useTranslation();
   const [selectedMonth, setSelectedMonth] = useState<string | null>(null);
   const [months, setMonths] = useState<string[]>([]);
+  const [displayCount, setDisplayCount] = useState<number>(3);
   const [dealerShiftData, setDealerShiftData] = useState<ShiftData | null>(null);
   const [dealerWHData, setDealerWHData] = useState<WHData | null>(null);
   const [smShiftData, setSMShiftData] = useState<ShiftData | null>(null);
@@ -34,13 +35,16 @@ export function SchedulePage({ countryName, countryId }: { countryName: string; 
     setLoadingMonths(true);
     try {
       const visibleMonths = await getVisibleMonthsForSection(countryId, 'schedule');
+      const displayCountValue = await getDisplayCount(countryId);
       setMonths(visibleMonths);
+      setDisplayCount(displayCountValue);
       if (visibleMonths.length > 0 && !selectedMonth) {
         setSelectedMonth(visibleMonths[0]);
       }
     } catch (error) {
       console.error('Error loading visible months:', error);
       setMonths(['September', 'October', 'November']);
+      setDisplayCount(3);
       setSelectedMonth('September');
     } finally {
       setLoadingMonths(false);
@@ -138,7 +142,7 @@ export function SchedulePage({ countryName, countryId }: { countryName: string; 
         </div>
 
         <div className="flex gap-2">
-          {months.map((month) => (
+          {months.slice(0, displayCount).map((month) => (
             <button
               key={month}
               onClick={() => setSelectedMonth(month)}

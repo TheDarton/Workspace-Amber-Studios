@@ -83,6 +83,10 @@ export async function setVisibleMonth(
   month: string
 ): Promise<boolean> {
   try {
+    if (!month || month.trim() === '') {
+      return await deleteVisibleMonth(countryId, section, priority);
+    }
+
     const { error } = await supabase
       .from('visible_months')
       .upsert(
@@ -131,6 +135,56 @@ export async function deleteVisibleMonth(
     return true;
   } catch (error) {
     console.error('[Visible Months] Exception:', error);
+    return false;
+  }
+}
+
+export async function getDisplayCount(countryId: string): Promise<number> {
+  try {
+    const { data, error } = await supabase
+      .from('visible_months_settings')
+      .select('display_count')
+      .eq('country_id', countryId)
+      .maybeSingle();
+
+    if (error) {
+      console.error('[Display Count] Error fetching display count:', error);
+      return 3;
+    }
+
+    return data?.display_count || 3;
+  } catch (error) {
+    console.error('[Display Count] Exception:', error);
+    return 3;
+  }
+}
+
+export async function setDisplayCount(
+  countryId: string,
+  displayCount: 1 | 2 | 3
+): Promise<boolean> {
+  try {
+    const { error } = await supabase
+      .from('visible_months_settings')
+      .upsert(
+        {
+          country_id: countryId,
+          display_count: displayCount,
+          updated_at: new Date().toISOString(),
+        },
+        {
+          onConflict: 'country_id',
+        }
+      );
+
+    if (error) {
+      console.error('[Display Count] Error setting display count:', error);
+      return false;
+    }
+
+    return true;
+  } catch (error) {
+    console.error('[Display Count] Exception:', error);
     return false;
   }
 }

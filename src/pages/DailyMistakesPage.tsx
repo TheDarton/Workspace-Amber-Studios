@@ -3,7 +3,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { useTranslation } from '../hooks/useTranslation';
 import { BarChart } from 'lucide-react';
 import { loadCSVFile, parseDailyStats } from '../lib/csvService';
-import { getVisibleMonthsForSection } from '../lib/visibleMonthsService';
+import { getVisibleMonthsForSection, getDisplayCount } from '../lib/visibleMonthsService';
 import type { DailyStatsData } from '../lib/csvTypes';
 import { isWeekend } from '../lib/csvTypes';
 
@@ -12,6 +12,7 @@ export function DailyMistakesPage({ countryName, countryId }: { countryName: str
   const { t } = useTranslation();
   const [selectedMonth, setSelectedMonth] = useState<string | null>(null);
   const [months, setMonths] = useState<string[]>([]);
+  const [displayCount, setDisplayCount] = useState<number>(3);
   const [statsData, setStatsData] = useState<DailyStatsData | null>(null);
   const [loading, setLoading] = useState(false);
   const [loadingMonths, setLoadingMonths] = useState(true);
@@ -30,13 +31,16 @@ export function DailyMistakesPage({ countryName, countryId }: { countryName: str
     setLoadingMonths(true);
     try {
       const visibleMonths = await getVisibleMonthsForSection(countryId, 'daily_mistakes');
+      const displayCountValue = await getDisplayCount(countryId);
       setMonths(visibleMonths);
+      setDisplayCount(displayCountValue);
       if (visibleMonths.length > 0 && !selectedMonth) {
         setSelectedMonth(visibleMonths[0]);
       }
     } catch (error) {
       console.error('Error loading visible months:', error);
       setMonths(['September', 'October', 'November']);
+      setDisplayCount(3);
       setSelectedMonth('September');
     } finally {
       setLoadingMonths(false);
@@ -117,7 +121,7 @@ export function DailyMistakesPage({ countryName, countryId }: { countryName: str
         </div>
 
         <div className="flex gap-2">
-          {months.map((month) => (
+          {months.slice(0, displayCount).map((month) => (
             <button
               key={month}
               onClick={() => setSelectedMonth(month)}

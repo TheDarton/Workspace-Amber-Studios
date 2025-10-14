@@ -469,8 +469,10 @@ export function GlobalAdminPage() {
             <div className="max-w-6xl">
               {renderCountryAdminContent()}
             </div>
-          ) : activeTab === 'add-country' && (
-            <div>
+          ) : (
+            <>
+              {activeTab === 'add-country' && (
+                <div>
               <h1 className="text-24 font-bold text-gray-900 mb-6">{t('countries.addCountry')}</h1>
 
               <div className="bg-white rounded-lg border border-gray-200 p-6 max-w-2xl">
@@ -543,11 +545,11 @@ export function GlobalAdminPage() {
                   </div>
                 </div>
               )}
-            </div>
-          )}
+                </div>
+              )}
 
-          {activeTab === 'add-admin' && (
-            <div>
+              {activeTab === 'add-admin' && (
+                <div>
               <h1 className="text-24 font-bold text-gray-900 mb-6">
                 {editingAdmin ? t('admins.editAdministrator') : t('admins.addAdministrator')}
               </h1>
@@ -700,11 +702,11 @@ export function GlobalAdminPage() {
                   </div>
                 </div>
               )}
-            </div>
-          )}
+                </div>
+              )}
 
-          {activeTab === 'settings' && (
-            <div>
+              {activeTab === 'settings' && (
+                <div>
               <h1 className="text-24 font-bold text-gray-900 mb-6">{t('settings.title')}</h1>
 
               <div className="bg-white rounded-lg border border-gray-200 p-6 max-w-2xl mb-6">
@@ -792,7 +794,9 @@ export function GlobalAdminPage() {
                   </button>
                 </form>
               </div>
-            </div>
+                </div>
+              )}
+            </>
           )}
         </main>
       </div>
