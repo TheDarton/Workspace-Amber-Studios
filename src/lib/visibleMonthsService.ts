@@ -20,12 +20,16 @@ export async function getVisibleMonthsForSection(
   countryName?: string
 ): Promise<string[]> {
   try {
+    console.log('[Visible Months] Fetching months for:', { countryId, section, countryName });
+
     const { data, error } = await supabase
       .from('visible_months')
       .select('*')
       .eq('country_id', countryId)
       .eq('section', section)
       .order('priority', { ascending: true });
+
+    console.log('[Visible Months] Query result:', { data, error, dataLength: data?.length });
 
     if (error) {
       console.error('[Visible Months] Error fetching months:', error);
@@ -37,6 +41,7 @@ export async function getVisibleMonthsForSection(
     }
 
     const months = data?.map((item) => item.month) || [];
+    console.log('[Visible Months] Extracted months:', months);
 
     if (months.length === 0 && countryName) {
       console.log('[Visible Months] No configured months, attempting fallback file detection for', countryName);
@@ -180,18 +185,24 @@ export async function deleteVisibleMonth(
 
 export async function getDisplayCount(countryId: string): Promise<number> {
   try {
+    console.log('[Display Count] Fetching display count for country:', countryId);
+
     const { data, error } = await supabase
       .from('visible_months_settings')
       .select('display_count')
       .eq('country_id', countryId)
       .maybeSingle();
 
+    console.log('[Display Count] Query result:', { data, error });
+
     if (error) {
       console.error('[Display Count] Error fetching display count:', error);
       return 3;
     }
 
-    return data?.display_count || 3;
+    const displayCount = data?.display_count || 3;
+    console.log('[Display Count] Returning display count:', displayCount);
+    return displayCount;
   } catch (error) {
     console.error('[Display Count] Exception:', error);
     return 3;
