@@ -3,12 +3,13 @@ import { Layout } from '../components/Layout';
 import { useTranslation } from '../hooks/useTranslation';
 import { useAuth } from '../contexts/AuthContext';
 import { supabase } from '../lib/supabase';
-import { Users, Calendar, BarChart, BookOpen, Newspaper, Clock, RefreshCw, Share2, Smartphone } from 'lucide-react';
+import { Users, Calendar, BarChart, BookOpen, Newspaper, Clock, RefreshCw, Share2, Smartphone, Settings } from 'lucide-react';
 import { SchedulePage } from './SchedulePage';
 import { DailyMistakesPage } from './DailyMistakesPage';
 import { MistakeStatisticsPage } from './MistakeStatisticsPage';
 import { TrainingAcademyPage } from './TrainingAcademyPage';
 import { NewsPage } from './NewsPage';
+import { VisibleMonthsConfig } from '../components/VisibleMonthsConfig';
 
 interface Country {
   id: string;
@@ -42,6 +43,7 @@ export function AdminPage() {
 
   const sections = [
     { id: 'users', label: t('nav.users'), icon: Users },
+    { id: 'csv-config', label: 'CSV Configuration', icon: Settings },
     { id: 'schedule', label: t('nav.schedule'), icon: Calendar },
     { id: 'mistake-stats', label: t('nav.mistakeStatistics'), icon: BarChart },
     { id: 'daily-mistakes', label: t('nav.dailyMistakes'), icon: BarChart },
@@ -65,12 +67,14 @@ export function AdminPage() {
     }
 
     switch (activeSection) {
+      case 'csv-config':
+        return <VisibleMonthsConfig countryId={country.id} countryName={country.name} />;
       case 'schedule':
-        return <SchedulePage countryName={country.name} />;
+        return <SchedulePage countryName={country.name} countryId={country.id} />;
       case 'daily-mistakes':
-        return <DailyMistakesPage countryName={country.name} />;
+        return <DailyMistakesPage countryName={country.name} countryId={country.id} />;
       case 'mistake-stats':
-        return <MistakeStatisticsPage countryName={country.name} />;
+        return <MistakeStatisticsPage countryName={country.name} countryId={country.id} />;
       case 'training':
         return <TrainingAcademyPage countryId={country.id} />;
       case 'news':

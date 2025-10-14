@@ -3,34 +3,49 @@ import { useAuth } from '../contexts/AuthContext';
 import { useTranslation } from '../hooks/useTranslation';
 import { Calendar } from 'lucide-react';
 import { loadCSVFile, parseShiftData, parseWHData } from '../lib/csvService';
+import { getVisibleMonthsForSection } from '../lib/visibleMonthsService';
 import ShiftCalendar from '../components/ShiftCalendar';
 import WHTable from '../components/WHTable';
 import type { ShiftData, WHData } from '../lib/csvTypes';
 
-interface Month {
-  name: string;
-  year: number;
-}
-
-const MONTHS = [
-  'January', 'February', 'March', 'April', 'May', 'June',
-  'July', 'August', 'September', 'October', 'November', 'December'
-];
-
-export function SchedulePage({ countryName }: { countryName: string }) {
+export function SchedulePage({ countryName, countryId }: { countryName: string; countryId: string }) {
   const { user } = useAuth();
   const { t } = useTranslation();
-  const [selectedMonth, setSelectedMonth] = useState('September');
-  const [months] = useState(['September', 'October', 'November']);
+  const [selectedMonth, setSelectedMonth] = useState<string | null>(null);
+  const [months, setMonths] = useState<string[]>([]);
   const [dealerShiftData, setDealerShiftData] = useState<ShiftData | null>(null);
   const [dealerWHData, setDealerWHData] = useState<WHData | null>(null);
   const [smShiftData, setSMShiftData] = useState<ShiftData | null>(null);
   const [smWHData, setSMWHData] = useState<WHData | null>(null);
   const [loading, setLoading] = useState(false);
+  const [loadingMonths, setLoadingMonths] = useState(true);
 
   useEffect(() => {
-    loadData();
+    loadMonths();
+  }, [countryId]);
+
+  useEffect(() => {
+    if (selectedMonth) {
+      loadData();
+    }
   }, [selectedMonth, countryName, user]);
+
+  const loadMonths = async () => {
+    setLoadingMonths(true);
+    try {
+      const visibleMonths = await getVisibleMonthsForSection(countryId, 'schedule');
+      setMonths(visibleMonths);
+      if (visibleMonths.length > 0 && !selectedMonth) {
+        setSelectedMonth(visibleMonths[0]);
+      }
+    } catch (error) {
+      console.error('Error loading visible months:', error);
+      setMonths(['September', 'October', 'November']);
+      setSelectedMonth('September');
+    } finally {
+      setLoadingMonths(false);
+    }
+  };
 
   const loadData = async () => {
     if (!selectedMonth || !countryName) return;
@@ -81,6 +96,38 @@ export function SchedulePage({ countryName }: { countryName: string }) {
   const userFullName = user?.name && user?.surname
     ? `${user.name} ${user.surname}`
     : undefined;
+
+  if (loadingMonths) {
+    return (
+      <div className="space-y-6">
+        <div className="flex items-center gap-4">
+          <Calendar className="w-6 h-6 text-[#FFA500]" />
+          <h1 className="text-2xl font-bold text-gray-900">{t('nav.schedule')}</h1>
+        </div>
+        <div className="bg-white rounded-lg border border-gray-200 p-8 text-center">
+          <div className="w-12 h-12 border-4 border-[#FFA500] border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading configuration...</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (months.length === 0) {
+    return (
+      <div className="space-y-6">
+        <div className="flex items-center gap-4">
+          <Calendar className="w-6 h-6 text-[#FFA500]" />
+          <h1 className="text-2xl font-bold text-gray-900">{t('nav.schedule')}</h1>
+        </div>
+        <div className="bg-white rounded-lg border border-gray-200 p-8 text-center">
+          <p className="text-gray-500">No months configured for schedule view</p>
+          <p className="text-sm text-gray-400 mt-2">
+            Contact your admin to configure visible months
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">

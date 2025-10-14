@@ -79,11 +79,11 @@ export function UserPage() {
 
     switch (activeSection) {
       case 'schedule':
-        return <SchedulePage countryName={country.name} />;
+        return <SchedulePage countryName={country.name} countryId={country.id} />;
       case 'daily-mistakes':
-        return <DailyMistakesPage countryName={country.name} />;
+        return <DailyMistakesPage countryName={country.name} countryId={country.id} />;
       case 'mistake-stats':
-        return <MistakeStatisticsPage countryName={country.name} />;
+        return <MistakeStatisticsPage countryName={country.name} countryId={country.id} />;
       case 'training':
         return <TrainingAcademyPage countryId={country.id} />;
       case 'news':
