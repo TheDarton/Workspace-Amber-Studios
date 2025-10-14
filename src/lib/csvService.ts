@@ -35,6 +35,48 @@ export async function loadCSVFile(
   }
 }
 
+export async function checkFileExists(
+  country: string,
+  fileType: CSVFileType,
+  month: string
+): Promise<boolean> {
+  const fileName = `${fileType}_${month}.csv`;
+  const path = `/${country}/${fileName}`;
+
+  try {
+    const response = await fetch(path, { method: 'HEAD' });
+    return response.ok;
+  } catch {
+    return false;
+  }
+}
+
+export async function detectAvailableMonths(country: string): Promise<string[]> {
+  const allMonths = [
+    'January', 'February', 'March', 'April', 'May', 'June',
+    'July', 'August', 'September', 'October', 'November', 'December'
+  ];
+
+  const requiredFileTypes: CSVFileType[] = ['Daily_Stats', 'Dealer_Shift', 'Dealer_Stats'];
+  const detectedMonths: string[] = [];
+
+  for (const month of allMonths) {
+    let hasAllRequired = true;
+    for (const fileType of requiredFileTypes) {
+      const exists = await checkFileExists(country, fileType, month);
+      if (!exists) {
+        hasAllRequired = false;
+        break;
+      }
+    }
+    if (hasAllRequired) {
+      detectedMonths.push(month);
+    }
+  }
+
+  return detectedMonths;
+}
+
 export async function getAvailableMonths(country: string): Promise<AvailableMonth[]> {
   const fileTypes: CSVFileType[] = [
     'Daily_Stats',

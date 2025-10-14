@@ -34,18 +34,19 @@ export function SchedulePage({ countryName, countryId }: { countryName: string; 
   const loadMonths = async () => {
     setLoadingMonths(true);
     try {
-      const visibleMonths = await getVisibleMonthsForSection(countryId, 'schedule');
+      const visibleMonths = await getVisibleMonthsForSection(countryId, 'schedule', countryName);
       const displayCountValue = await getDisplayCount(countryId);
+
+      console.log('[SchedulePage] Loaded months:', visibleMonths, 'Display count:', displayCountValue);
+
       setMonths(visibleMonths);
       setDisplayCount(displayCountValue);
+
       if (visibleMonths.length > 0 && !selectedMonth) {
         setSelectedMonth(visibleMonths[0]);
       }
     } catch (error) {
-      console.error('Error loading visible months:', error);
-      setMonths(['September', 'October', 'November']);
-      setDisplayCount(3);
-      setSelectedMonth('September');
+      console.error('[SchedulePage] Error loading visible months:', error);
     } finally {
       setLoadingMonths(false);
     }

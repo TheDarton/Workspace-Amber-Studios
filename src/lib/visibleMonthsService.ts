@@ -1,4 +1,5 @@
 import { supabase } from './supabase';
+import { detectAvailableMonths } from './csvService';
 
 export type SectionType = 'schedule' | 'mistake_statistics' | 'daily_mistakes';
 
@@ -14,7 +15,8 @@ export interface VisibleMonth {
 
 export async function getVisibleMonthsForSection(
   countryId: string,
-  section: SectionType
+  section: SectionType,
+  countryName?: string
 ): Promise<string[]> {
   try {
     const { data, error } = await supabase
@@ -26,12 +28,27 @@ export async function getVisibleMonthsForSection(
 
     if (error) {
       console.error('[Visible Months] Error fetching months:', error);
+      if (countryName) {
+        console.log('[Visible Months] Attempting fallback file detection for', countryName);
+        return await detectAvailableMonths(countryName);
+      }
       return [];
     }
 
-    return data?.map((item) => item.month) || [];
+    const months = data?.map((item) => item.month) || [];
+
+    if (months.length === 0 && countryName) {
+      console.log('[Visible Months] No configured months, attempting fallback file detection for', countryName);
+      return await detectAvailableMonths(countryName);
+    }
+
+    return months;
   } catch (error) {
     console.error('[Visible Months] Exception:', error);
+    if (countryName) {
+      console.log('[Visible Months] Exception caught, attempting fallback file detection for', countryName);
+      return await detectAvailableMonths(countryName);
+    }
     return [];
   }
 }

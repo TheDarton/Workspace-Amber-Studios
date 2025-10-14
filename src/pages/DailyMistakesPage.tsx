@@ -30,18 +30,19 @@ export function DailyMistakesPage({ countryName, countryId }: { countryName: str
   const loadMonths = async () => {
     setLoadingMonths(true);
     try {
-      const visibleMonths = await getVisibleMonthsForSection(countryId, 'daily_mistakes');
+      const visibleMonths = await getVisibleMonthsForSection(countryId, 'daily_mistakes', countryName);
       const displayCountValue = await getDisplayCount(countryId);
+
+      console.log('[DailyMistakesPage] Loaded months:', visibleMonths, 'Display count:', displayCountValue);
+
       setMonths(visibleMonths);
       setDisplayCount(displayCountValue);
+
       if (visibleMonths.length > 0 && !selectedMonth) {
         setSelectedMonth(visibleMonths[0]);
       }
     } catch (error) {
-      console.error('Error loading visible months:', error);
-      setMonths(['September', 'October', 'November']);
-      setDisplayCount(3);
-      setSelectedMonth('September');
+      console.error('[DailyMistakesPage] Error loading visible months:', error);
     } finally {
       setLoadingMonths(false);
     }
