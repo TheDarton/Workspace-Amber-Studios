@@ -9,6 +9,39 @@ import type {
 } from './csvTypes';
 import { excelDateToJSDate, getWeekday, getMistakeCategory } from './csvTypes';
 
+function parseCSVToArray(csvText: string): string[][] {
+  const lines = csvText.split('\n').filter(line => line.trim());
+  const result: string[][] = [];
+
+  for (const line of lines) {
+    const row: string[] = [];
+    let current = '';
+    let inQuotes = false;
+
+    for (let i = 0; i < line.length; i++) {
+      const char = line[i];
+
+      if (char === '"') {
+        if (inQuotes && line[i + 1] === '"') {
+          current += '"';
+          i++;
+        } else {
+          inQuotes = !inQuotes;
+        }
+      } else if (char === ',' && !inQuotes) {
+        row.push(current);
+        current = '';
+      } else {
+        current += char;
+      }
+    }
+    row.push(current);
+    result.push(row);
+  }
+
+  return result;
+}
+
 export async function loadCSVFile(
   country: string,
   fileType: CSVFileType,
@@ -28,7 +61,9 @@ export async function loadCSVFile(
     }
     const text = await response.text();
     console.log(`[CSV Loader] Successfully loaded ${fileName}, size: ${text.length} bytes`);
-    return parseCSV(text);
+    const parsed = parseCSVToArray(text);
+    console.log(`[CSV Loader] Parsed into ${parsed.length} rows`);
+    return parsed;
   } catch (error) {
     console.error(`[CSV Loader] Error loading ${path}:`, error);
     throw error;
