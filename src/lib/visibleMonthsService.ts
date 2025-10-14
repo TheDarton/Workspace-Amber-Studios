@@ -1,5 +1,6 @@
 import { supabase } from './supabase';
 import { detectAvailableMonths } from './csvService';
+import type { User } from './auth';
 
 export type SectionType = 'schedule' | 'mistake_statistics' | 'daily_mistakes';
 
@@ -97,12 +98,23 @@ export async function setVisibleMonth(
   countryId: string,
   section: SectionType,
   priority: 1 | 2 | 3,
-  month: string
+  month: string,
+  user?: User | null
 ): Promise<boolean> {
   try {
-    if (!month || month.trim() === '') {
-      return await deleteVisibleMonth(countryId, section, priority);
+    if (user) {
+      const hasPermission = validateUserPermission(user, countryId);
+      if (!hasPermission) {
+        console.error('[Visible Months] Permission denied: User does not have access to this country');
+        return false;
+      }
     }
+
+    if (!month || month.trim() === '') {
+      return await deleteVisibleMonth(countryId, section, priority, user);
+    }
+
+    console.log('[Visible Months] Setting month:', { countryId, section, priority, month });
 
     const { error } = await supabase
       .from('visible_months')
@@ -124,6 +136,7 @@ export async function setVisibleMonth(
       return false;
     }
 
+    console.log('[Visible Months] Month set successfully');
     return true;
   } catch (error) {
     console.error('[Visible Months] Exception:', error);
@@ -134,9 +147,18 @@ export async function setVisibleMonth(
 export async function deleteVisibleMonth(
   countryId: string,
   section: SectionType,
-  priority: number
+  priority: number,
+  user?: User | null
 ): Promise<boolean> {
   try {
+    if (user) {
+      const hasPermission = validateUserPermission(user, countryId);
+      if (!hasPermission) {
+        console.error('[Visible Months] Permission denied: User does not have access to this country');
+        return false;
+      }
+    }
+
     const { error } = await supabase
       .from('visible_months')
       .delete()
@@ -178,9 +200,20 @@ export async function getDisplayCount(countryId: string): Promise<number> {
 
 export async function setDisplayCount(
   countryId: string,
-  displayCount: 1 | 2 | 3
+  displayCount: 1 | 2 | 3,
+  user?: User | null
 ): Promise<boolean> {
   try {
+    if (user) {
+      const hasPermission = validateUserPermission(user, countryId);
+      if (!hasPermission) {
+        console.error('[Display Count] Permission denied: User does not have access to this country');
+        return false;
+      }
+    }
+
+    console.log('[Display Count] Setting display count:', { countryId, displayCount });
+
     const { error } = await supabase
       .from('visible_months_settings')
       .upsert(
@@ -199,11 +232,24 @@ export async function setDisplayCount(
       return false;
     }
 
+    console.log('[Display Count] Display count set successfully');
     return true;
   } catch (error) {
     console.error('[Display Count] Exception:', error);
     return false;
   }
+}
+
+function validateUserPermission(user: User, countryId: string): boolean {
+  if (user.role === 'global_admin') {
+    return true;
+  }
+
+  if (user.role === 'admin' && user.country_id === countryId) {
+    return true;
+  }
+
+  return false;
 }
 
 export const AVAILABLE_MONTHS = [

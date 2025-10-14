@@ -8,6 +8,7 @@ import {
   AVAILABLE_MONTHS,
   type SectionType,
 } from '../lib/visibleMonthsService';
+import { useAuth } from '../contexts/AuthContext';
 
 interface VisibleMonthsConfigProps {
   countryId: string;
@@ -21,6 +22,7 @@ type UnifiedConfig = {
 };
 
 export function VisibleMonthsConfig({ countryId, countryName }: VisibleMonthsConfigProps) {
+  const { user } = useAuth();
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
@@ -63,15 +65,16 @@ export function VisibleMonthsConfig({ countryId, countryName }: VisibleMonthsCon
     setMessage(null);
 
     try {
+      console.log('[VisibleMonthsConfig] Starting save with user:', user?.role, 'country:', countryId);
       const sections: SectionType[] = ['schedule', 'mistake_statistics', 'daily_mistakes'];
 
       for (const section of sections) {
-        await setVisibleMonth(countryId, section, 1, config.month1);
-        await setVisibleMonth(countryId, section, 2, config.month2);
-        await setVisibleMonth(countryId, section, 3, config.month3);
+        await setVisibleMonth(countryId, section, 1, config.month1, user);
+        await setVisibleMonth(countryId, section, 2, config.month2, user);
+        await setVisibleMonth(countryId, section, 3, config.month3, user);
       }
 
-      await setDisplayCount(countryId, displayCount);
+      await setDisplayCount(countryId, displayCount, user);
 
       await loadConfigurations();
       setMessage({ type: 'success', text: 'Configurations saved successfully for all sections!' });
