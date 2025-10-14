@@ -93,7 +93,7 @@ export function LoginPage() {
                 href="https://amber-studios.com"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="hover:text-amber transition-colors cursor-pointer underline"
+                className="hover:text-white transition-colors cursor-pointer underline"
               >
                 amber-studios.com
               </a>
@@ -177,7 +177,7 @@ export function LoginPage() {
               href="https://amber-studios.com"
               target="_blank"
               rel="noopener noreferrer"
-              className="hover:text-amber transition-colors cursor-pointer underline"
+              className="hover:text-white transition-colors cursor-pointer underline"
             >
               amber-studios.com
             </a>

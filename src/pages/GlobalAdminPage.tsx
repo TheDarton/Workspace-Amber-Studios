@@ -8,6 +8,7 @@ import { DailyMistakesPage } from './DailyMistakesPage';
 import { MistakeStatisticsPage } from './MistakeStatisticsPage';
 import { TrainingAcademyPage } from './TrainingAcademyPage';
 import { NewsPage } from './NewsPage';
+import { VisibleMonthsConfig } from '../components/VisibleMonthsConfig';
 import { useAuth } from '../contexts/AuthContext';
 
 interface Country {
@@ -304,6 +305,7 @@ export function GlobalAdminPage() {
 
   const adminSections = [
     { id: 'users', label: t('nav.users'), icon: Users },
+    { id: 'csv-config', label: 'CSV Configuration', icon: Settings },
     { id: 'schedule', label: t('nav.schedule'), icon: Calendar },
     { id: 'mistake-stats', label: t('nav.mistakeStatistics'), icon: BarChart },
     { id: 'daily-mistakes', label: t('nav.dailyMistakes'), icon: BarChart },
@@ -320,12 +322,14 @@ export function GlobalAdminPage() {
     if (!country) return null;
 
     switch (activeSection) {
+      case 'csv-config':
+        return <VisibleMonthsConfig countryId={country.id} countryName={country.name} />;
       case 'schedule':
-        return <SchedulePage countryName={country.name} />;
+        return <SchedulePage countryName={country.name} countryId={country.id} />;
       case 'daily-mistakes':
-        return <DailyMistakesPage countryName={country.name} />;
+        return <DailyMistakesPage countryName={country.name} countryId={country.id} />;
       case 'mistake-stats':
-        return <MistakeStatisticsPage countryName={country.name} />;
+        return <MistakeStatisticsPage countryName={country.name} countryId={country.id} />;
       case 'training':
         return <TrainingAcademyPage countryId={country.id} />;
       case 'news':

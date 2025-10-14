@@ -12,7 +12,7 @@ interface VisibleMonthsConfigProps {
   countryName: string;
 }
 
-type SectionConfig = {
+type UnifiedConfig = {
   month1: string;
   month2: string;
   month3: string;
@@ -23,19 +23,7 @@ export function VisibleMonthsConfig({ countryId, countryName }: VisibleMonthsCon
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
 
-  const [scheduleConfig, setScheduleConfig] = useState<SectionConfig>({
-    month1: '',
-    month2: '',
-    month3: '',
-  });
-
-  const [mistakeStatsConfig, setMistakeStatsConfig] = useState<SectionConfig>({
-    month1: '',
-    month2: '',
-    month3: '',
-  });
-
-  const [dailyMistakesConfig, setDailyMistakesConfig] = useState<SectionConfig>({
+  const [config, setConfig] = useState<UnifiedConfig>({
     month1: '',
     month2: '',
     month3: '',
@@ -50,22 +38,10 @@ export function VisibleMonthsConfig({ countryId, countryName }: VisibleMonthsCon
     try {
       const configs = await getAllVisibleMonthsForCountry(countryId);
 
-      setScheduleConfig({
+      setConfig({
         month1: configs.schedule[0] || '',
         month2: configs.schedule[1] || '',
         month3: configs.schedule[2] || '',
-      });
-
-      setMistakeStatsConfig({
-        month1: configs.mistake_statistics[0] || '',
-        month2: configs.mistake_statistics[1] || '',
-        month3: configs.mistake_statistics[2] || '',
-      });
-
-      setDailyMistakesConfig({
-        month1: configs.daily_mistakes[0] || '',
-        month2: configs.daily_mistakes[1] || '',
-        month3: configs.daily_mistakes[2] || '',
       });
     } catch (error) {
       console.error('Error loading configurations:', error);
@@ -80,13 +56,9 @@ export function VisibleMonthsConfig({ countryId, countryName }: VisibleMonthsCon
     setMessage(null);
 
     try {
-      const updates = [
-        { section: 'schedule' as SectionType, config: scheduleConfig },
-        { section: 'mistake_statistics' as SectionType, config: mistakeStatsConfig },
-        { section: 'daily_mistakes' as SectionType, config: dailyMistakesConfig },
-      ];
+      const sections: SectionType[] = ['schedule', 'mistake_statistics', 'daily_mistakes'];
 
-      for (const { section, config } of updates) {
+      for (const section of sections) {
         if (config.month1) {
           await setVisibleMonth(countryId, section, 1, config.month1);
         }
@@ -98,7 +70,7 @@ export function VisibleMonthsConfig({ countryId, countryName }: VisibleMonthsCon
         }
       }
 
-      setMessage({ type: 'success', text: 'Configurations saved successfully!' });
+      setMessage({ type: 'success', text: 'Configurations saved successfully for all sections!' });
       setTimeout(() => setMessage(null), 3000);
     } catch (error) {
       console.error('Error saving configurations:', error);
@@ -116,39 +88,6 @@ export function VisibleMonthsConfig({ countryId, countryName }: VisibleMonthsCon
       </div>
     );
   }
-
-  const renderSectionConfig = (
-    title: string,
-    config: SectionConfig,
-    setConfig: React.Dispatch<React.SetStateAction<SectionConfig>>
-  ) => (
-    <div className="bg-white rounded-lg border border-gray-200 p-6">
-      <h3 className="text-lg font-semibold text-gray-900 mb-4">{title}</h3>
-      <div className="space-y-4">
-        {['month1', 'month2', 'month3'].map((key, index) => (
-          <div key={key}>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              Priority {index + 1}
-            </label>
-            <select
-              value={config[key as keyof SectionConfig]}
-              onChange={(e) =>
-                setConfig((prev) => ({ ...prev, [key]: e.target.value }))
-              }
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#FFA500] focus:border-transparent"
-            >
-              <option value="">-- Select Month --</option>
-              {AVAILABLE_MONTHS.map((month) => (
-                <option key={month} value={month}>
-                  {month}
-                </option>
-              ))}
-            </select>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
 
   return (
     <div className="space-y-6">
@@ -168,7 +107,7 @@ export function VisibleMonthsConfig({ countryId, countryName }: VisibleMonthsCon
           className="flex items-center gap-2 px-6 py-2 bg-[#FFA500] text-white rounded-lg hover:bg-[#FF8C00] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         >
           <Save className="w-4 h-4" />
-          {saving ? 'Saving...' : 'Save All'}
+          {saving ? 'Saving...' : 'Save Configuration'}
         </button>
       </div>
 
@@ -189,19 +128,60 @@ export function VisibleMonthsConfig({ countryId, countryName }: VisibleMonthsCon
         </div>
       )}
 
-      <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
-        <p className="text-sm text-amber-800">
-          <strong>Note:</strong> Users will see the selected months in the order of priority (1,
-          2, 3). You can select up to 3 months per section. Make sure CSV files exist in the{' '}
-          <code className="bg-amber-100 px-1 rounded">/public/{countryName}/</code> directory for
+      <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+        <p className="text-sm text-blue-800">
+          <strong>Note:</strong> The months you select below will apply to{' '}
+          <strong>all three sections</strong>: Schedule, Mistake Statistics, and Daily Mistakes.
+          Users will see the selected months in the order of priority (1, 2, 3). Make sure CSV
+          files exist in the{' '}
+          <code className="bg-blue-100 px-1 rounded">/public/{countryName}/</code> directory for
           the selected months.
         </p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        {renderSectionConfig('Schedule', scheduleConfig, setScheduleConfig)}
-        {renderSectionConfig('Mistake Statistics', mistakeStatsConfig, setMistakeStatsConfig)}
-        {renderSectionConfig('Daily Mistakes', dailyMistakesConfig, setDailyMistakesConfig)}
+      <div className="bg-white rounded-lg border border-gray-200 p-6">
+        <h3 className="text-lg font-semibold text-gray-900 mb-4">
+          Unified Month Priority Configuration
+        </h3>
+        <p className="text-sm text-gray-600 mb-6">
+          Select up to 3 months that will be visible across all sections (Schedule, Mistake
+          Statistics, and Daily Mistakes).
+        </p>
+        <div className="space-y-4">
+          {['month1', 'month2', 'month3'].map((key, index) => (
+            <div key={key}>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Priority {index + 1}
+              </label>
+              <select
+                value={config[key as keyof UnifiedConfig]}
+                onChange={(e) =>
+                  setConfig((prev) => ({ ...prev, [key]: e.target.value }))
+                }
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#FFA500] focus:border-transparent"
+              >
+                <option value="">-- Select Month --</option>
+                {AVAILABLE_MONTHS.map((month) => (
+                  <option key={month} value={month}>
+                    {month}
+                  </option>
+                ))}
+              </select>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
+        <h4 className="text-sm font-semibold text-amber-900 mb-2">Applied To:</h4>
+        <ul className="text-sm text-amber-800 space-y-1">
+          <li>• Schedule Section</li>
+          <li>• Mistake Statistics Section</li>
+          <li>• Daily Mistakes Section</li>
+        </ul>
+        <p className="text-xs text-amber-700 mt-3">
+          All three sections will display the same months in the same priority order.
+        </p>
       </div>
     </div>
   );
