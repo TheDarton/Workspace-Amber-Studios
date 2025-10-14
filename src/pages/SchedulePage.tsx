@@ -54,17 +54,24 @@ export function SchedulePage({ countryName, countryId }: { countryName: string; 
   };
 
   const loadData = async () => {
-    if (!selectedMonth || !countryName) return;
+    console.log('[SchedulePage] loadData called with:', { selectedMonth, countryName, userRole: user?.role });
+
+    if (!selectedMonth || !countryName) {
+      console.log('[SchedulePage] loadData aborted: missing selectedMonth or countryName');
+      return;
+    }
 
     setLoading(true);
 
     try {
       if (user?.role !== 'sm') {
+        console.log('[SchedulePage] Loading Dealer files...');
         try {
           const shiftCSV = await loadCSVFile(countryName, 'Dealer_Shift', selectedMonth);
+          console.log('[SchedulePage] Dealer_Shift loaded, rows:', shiftCSV.length);
           setDealerShiftData(parseShiftData(shiftCSV));
         } catch (err) {
-          console.log('Dealer_Shift not available');
+          console.log('[SchedulePage] Dealer_Shift not available:', err);
           setDealerShiftData(null);
         }
 
