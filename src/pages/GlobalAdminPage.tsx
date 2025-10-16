@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Layout } from '../components/Layout';
 import { useTranslation } from '../hooks/useTranslation';
-import { supabase } from '../lib/supabase';
+import { loadCountries, type Country } from '../lib/configService';
 import { Plus, Settings, Globe, Users, Trash2, Edit2, Calendar, BarChart, BookOpen, Newspaper, Clock, RefreshCw, Share2, Smartphone } from 'lucide-react';
 import { SchedulePage } from './SchedulePage';
 import { DailyMistakesPage } from './DailyMistakesPage';
@@ -10,12 +10,6 @@ import { TrainingAcademyPage } from './TrainingAcademyPage';
 import { NewsPage } from './NewsPage';
 import { VisibleMonthsConfig } from '../components/VisibleMonthsConfig';
 import { useAuth } from '../contexts/AuthContext';
-
-interface Country {
-  id: string;
-  name: string;
-  prefix: string;
-}
 
 interface Admin {
   id: string;

@@ -3,7 +3,7 @@ import { useAuth } from '../contexts/AuthContext';
 import { useTranslation } from '../hooks/useTranslation';
 import { BarChart } from 'lucide-react';
 import { loadCSVFile, parseMistakeStats } from '../lib/csvService';
-import { getVisibleMonthsForSection, getDisplayCount } from '../lib/visibleMonthsService';
+import { getVisibleMonthsForSection, getDisplayCount } from '../lib/configService';
 import type { MistakeStatsData } from '../lib/csvTypes';
 
 export function MistakeStatisticsPage({ countryName, countryId }: { countryName: string; countryId: string }) {

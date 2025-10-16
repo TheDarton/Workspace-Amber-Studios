@@ -2,19 +2,13 @@ import { useState, useEffect } from 'react';
 import { Layout } from '../components/Layout';
 import { useTranslation } from '../hooks/useTranslation';
 import { useAuth } from '../contexts/AuthContext';
-import { supabase } from '../lib/supabase';
+import { loadCountries, type Country } from '../lib/configService';
 import { Calendar, BarChart, BookOpen, Newspaper, Clock, RefreshCw } from 'lucide-react';
 import { SchedulePage } from './SchedulePage';
 import { DailyMistakesPage } from './DailyMistakesPage';
 import { MistakeStatisticsPage } from './MistakeStatisticsPage';
 import { TrainingAcademyPage } from './TrainingAcademyPage';
 import { NewsPage } from './NewsPage';
-
-interface Country {
-  id: string;
-  name: string;
-  prefix: string;
-}
 
 export function UserPage() {
   const { t } = useTranslation();
@@ -29,14 +23,11 @@ export function UserPage() {
   const loadCountry = async () => {
     if (!user?.country_id) return;
 
-    const { data, error } = await supabase
-      .from('countries')
-      .select('*')
-      .eq('id', user.country_id)
-      .maybeSingle();
+    const countries = await loadCountries();
+    const userCountry = countries.find(c => c.id === user.country_id);
 
-    if (!error && data) {
-      setCountry(data);
+    if (userCountry) {
+      setCountry(userCountry);
     }
   };
 

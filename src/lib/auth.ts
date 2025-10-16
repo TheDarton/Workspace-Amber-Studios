@@ -1,5 +1,3 @@
-import { supabase } from './supabase';
-
 export type UserRole = 'global_admin' | 'admin' | 'operation' | 'dealer' | 'sm';
 
 export interface User {
@@ -15,75 +13,113 @@ export interface User {
   must_change_password: boolean;
 }
 
+interface UserConfig {
+  id: string;
+  username: string;
+  password: string;
+  fullName: string;
+  role: UserRole;
+  countryId: string | null;
+  countryName: string | null;
+}
+
+interface UsersConfig {
+  users: UserConfig[];
+}
+
+let usersCache: UsersConfig | null = null;
+
+async function loadUsers(): Promise<UsersConfig> {
+  if (usersCache) return usersCache;
+
+  try {
+    const response = await fetch('/config/users.json');
+    if (!response.ok) throw new Error('Failed to load users');
+    usersCache = await response.json();
+    return usersCache!;
+  } catch (error) {
+    console.error('Error loading users:', error);
+    return { users: [] };
+  }
+}
+
 export async function signIn(login: string, password: string): Promise<{ user: User | null; error: string | null }> {
   try {
-    const { data, error } = await supabase
-      .from('users')
-      .select('*')
-      .eq('login', login)
-      .maybeSingle();
+    const config = await loadUsers();
+    const userConfig = config.users.find(u => u.username === login);
 
-    if (error) throw error;
-    if (!data) return { user: null, error: 'Invalid login or password' };
-
-    const validPassword = await verifyPassword(password, data.password_hash);
-    if (!validPassword) {
+    if (!userConfig) {
       return { user: null, error: 'Invalid login or password' };
     }
 
-    const { password_hash, ...user } = data;
-    return { user: user as User, error: null };
+    if (userConfig.password !== password) {
+      return { user: null, error: 'Invalid login or password' };
+    }
+
+    const [firstName, ...lastNameParts] = userConfig.fullName.split(' ');
+    const user: User = {
+      id: userConfig.id,
+      country_id: userConfig.countryId,
+      role: userConfig.role,
+      login: userConfig.username,
+      name: firstName,
+      surname: lastNameParts.join(' ') || null,
+      email: null,
+      nickname: null,
+      photo_url: null,
+      must_change_password: false,
+    };
+
+    localStorage.setItem('currentUser', JSON.stringify(user));
+    return { user, error: null };
   } catch (error) {
+    console.error('Authentication error:', error);
     return { user: null, error: 'Authentication failed' };
   }
 }
 
-async function verifyPassword(password: string, hash: string): Promise<boolean> {
-  if (hash === '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy' && password === 'admin') {
-    return true;
-  }
-
-  if (hash.startsWith('hashed_')) {
-    return hash === `hashed_${password}`;
-  }
-
-  return false;
-}
-
 export async function updatePassword(userId: string, newPassword: string): Promise<{ error: string | null }> {
-  try {
-    const passwordHash = await hashPassword(newPassword);
-
-    const { error } = await supabase
-      .from('users')
-      .update({ password_hash: passwordHash, must_change_password: false })
-      .eq('id', userId);
-
-    if (error) throw error;
-    return { error: null };
-  } catch (error) {
-    return { error: 'Failed to update password' };
-  }
-}
-
-async function hashPassword(password: string): Promise<string> {
-  return `hashed_${password}`;
+  console.warn('Password update not implemented in static mode');
+  return { error: 'Password update not available in static mode' };
 }
 
 export async function getUser(userId: string): Promise<{ user: User | null; error: string | null }> {
   try {
-    const { data, error } = await supabase
-      .from('users')
-      .select('*')
-      .eq('id', userId)
-      .maybeSingle();
+    const storedUser = localStorage.getItem('currentUser');
+    if (storedUser) {
+      const user = JSON.parse(storedUser) as User;
+      if (user.id === userId) {
+        return { user, error: null };
+      }
+    }
 
-    if (error) throw error;
-    if (!data) return { user: null, error: 'User not found' };
+    const config = await loadUsers();
+    const userConfig = config.users.find(u => u.id === userId);
 
-    const { password_hash, ...user } = data;
-    return { user: user as User, error: null };
+    if (!userConfig) {
+      return { user: null, error: 'User not found' };
+    }
+
+    const [firstName, ...lastNameParts] = userConfig.fullName.split(' ');
+    const user: User = {
+      id: userConfig.id,
+      country_id: userConfig.countryId,
+      role: userConfig.role,
+      login: userConfig.username,
+      name: firstName,
+      surname: lastNameParts.join(' ') || null,
+      email: null,
+      nickname: null,
+      photo_url: null,
+      must_change_password: false,
+    };
+
+    return { user, error: null };
   } catch (error) {
     return { user: null, error: 'Failed to get user' };
   }
+}
+
+export function signOut(): void {
+  localStorage.removeItem('currentUser');
 }

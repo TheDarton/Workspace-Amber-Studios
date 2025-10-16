@@ -3,10 +3,9 @@ import { useAuth } from '../contexts/AuthContext';
 import { useTranslation } from '../hooks/useTranslation';
 import { Calendar } from 'lucide-react';
 import { loadCSVFile, parseShiftData, parseWHData } from '../lib/csvService';
-import { getVisibleMonthsForSection, getDisplayCount } from '../lib/visibleMonthsService';
+import { getVisibleMonthsForSection, getDisplayCount } from '../lib/configService';
 import ShiftCalendar from '../components/ShiftCalendar';
 import WHTable from '../components/WHTable';
-import { DiagnosticTest } from '../components/DiagnosticTest';
 import type { ShiftData, WHData } from '../lib/csvTypes';
 
 export function SchedulePage({ countryName, countryId }: { countryName: string; countryId: string }) {
@@ -144,8 +143,6 @@ export function SchedulePage({ countryName, countryId }: { countryName: string; 
 
   return (
     <div className="space-y-6">
-      <DiagnosticTest />
-
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-4">
           <Calendar className="w-6 h-6 text-[#FFA500]" />
