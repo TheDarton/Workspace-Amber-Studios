@@ -10,13 +10,14 @@ This application is now configured to run as a static site suitable for GitHub P
 
 ## Default Login Credentials
 
-### Admins
-- **Latvia Admin**: username: `latvia_admin`, password: `admin123`
-- **Poland Admin**: username: `poland_admin`, password: `admin123`
-- **Global Admin**: username: `global_admin`, password: `admin123`
+**Global Admin**: username: `global_admin`, password: `admin123`
 
-### Users
-- **Latvia User**: username: `latvia_user`, password: `user123`
+**Note:** The Global Admin has full access to all countries and features. To manage a specific country:
+1. Login as global_admin
+2. Select the country from the dropdown in the sidebar
+3. Access all country-specific sections and data
+
+Additional country administrators can be created through the Global Admin panel if needed.
 
 ## Deployment Steps
 

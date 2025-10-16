@@ -2,39 +2,12 @@
   "users": [
     {
       "id": "1",
-      "username": "latvia_admin",
-      "password": "admin123",
-      "fullName": "Latvia Admin",
-      "role": "admin",
-      "countryId": "latvia",
-      "countryName": "Latvia"
-    },
-    {
-      "id": "2",
-      "username": "poland_admin",
-      "password": "admin123",
-      "fullName": "Poland Admin",
-      "role": "admin",
-      "countryId": "poland",
-      "countryName": "Poland"
-    },
-    {
-      "id": "3",
       "username": "global_admin",
       "password": "admin123",
       "fullName": "Global Admin",
       "role": "global_admin",
       "countryId": null,
       "countryName": null
-    },
-    {
-      "id": "4",
-      "username": "latvia_user",
-      "password": "user123",
-      "fullName": "John Doe",
-      "role": "user",
-      "countryId": "latvia",
-      "countryName": "Latvia"
     }
   ]
 }

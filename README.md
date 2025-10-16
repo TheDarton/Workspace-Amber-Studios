@@ -168,9 +168,11 @@ npm run build
 
 ## Default Login
 
-- **Username:** Global_admin
-- **Password:** admin
+- **Username:** global_admin
+- **Password:** admin123
 - You will be prompted to change the password on first login
+
+**Note:** The Global Admin can select any country from the sidebar to manage country-specific data and settings. There are no default country-specific admin accounts. Global Admin has full access to all countries and can create additional country administrators as needed.
 
 ## Tech Stack
 

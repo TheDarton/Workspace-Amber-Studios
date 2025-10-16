@@ -10,6 +10,7 @@ import { TrainingAcademyPage } from './TrainingAcademyPage';
 import { NewsPage } from './NewsPage';
 import { VisibleMonthsConfig } from '../components/VisibleMonthsConfig';
 import { useAuth } from '../contexts/AuthContext';
+import { supabase } from '../lib/supabase';
 
 interface Admin {
   id: string;
