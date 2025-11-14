@@ -1,130 +1,168 @@
-# GitHub Pages Deployment Guide
+# Deployment Guide - GitHub Pages + Supabase
 
-This application is now configured to run as a static site suitable for GitHub Pages deployment.
+This application uses Supabase for backend (database and authentication) and can be deployed as a static frontend on GitHub Pages.
 
-## Features
+## Prerequisites
 
-- **No Backend Required**: All authentication and configuration is handled client-side
-- **Local Storage**: User settings and visible months configuration are stored in browser localStorage
-- **JSON Configuration**: Countries, users, and initial settings are in `/public/config/`
+1. **Supabase Account**: Create a project at [supabase.com](https://supabase.com)
+2. **GitHub Account**: For hosting the frontend
 
 ## Default Login Credentials
 
-**Global Admin**: username: `global_admin`, password: `admin123`
+**Global Admin**:
+- Username: `global_admin`
+- Password: `admin123`
 
-**Note:** The Global Admin has full access to all countries and features. To manage a specific country:
+**Important:** After first login, you will be prompted to change the password.
+
+### Using the Application
+
+The Global Admin has full access to all countries and features. To manage a specific country:
 1. Login as global_admin
 2. Select the country from the dropdown in the sidebar
 3. Access all country-specific sections and data
 
 Additional country administrators can be created through the Global Admin panel if needed.
 
-## Deployment Steps
+## Setup Instructions
 
-### Option 1: GitHub Pages (Recommended)
+### 1. Setup Supabase Backend
 
-1. Push your code to a GitHub repository
-2. Go to repository Settings → Pages
-3. Select source: "Deploy from a branch"
-4. Select branch: `main` and folder: `/dist`
-5. Click Save
-6. Your site will be available at `https://<username>.github.io/<repository>/`
+1. Create a new project at [Supabase Dashboard](https://app.supabase.com)
+2. Copy your project URL and anon key from Project Settings → API
+3. Run the migrations:
+   - Go to SQL Editor in Supabase Dashboard
+   - Run each migration file from `supabase/migrations/` in order (by timestamp)
+   - This will create all necessary tables and the default global_admin account
 
-**Important**: Before deploying, you may need to update the base path in `vite.config.ts`:
+### 2. Configure Environment Variables
 
+1. Copy `.env.example` to `.env`:
+   ```bash
+   cp .env.example .env
+   ```
+
+2. Update `.env` with your Supabase credentials:
+   ```
+   VITE_SUPABASE_URL=https://your-project.supabase.co
+   VITE_SUPABASE_ANON_KEY=your-anon-key-here
+   ```
+
+**Important:** Never commit `.env` to GitHub. It's already in `.gitignore`.
+
+### 3. Deploy to GitHub Pages
+
+#### Option A: Automatic Deployment with GitHub Actions (Recommended)
+
+1. Create `.github/workflows/deploy.yml`:
+
+```yaml
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build
+        env:
+          VITE_SUPABASE_URL: \${{ secrets.VITE_SUPABASE_URL }}
+          VITE_SUPABASE_ANON_KEY: \${{ secrets.VITE_SUPABASE_ANON_KEY }}
+        run: npm run build
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: './dist'
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+```
+
+2. Add secrets to your GitHub repository:
+   - Go to Settings → Secrets and variables → Actions
+   - Add `VITE_SUPABASE_URL`
+   - Add `VITE_SUPABASE_ANON_KEY`
+
+3. Enable GitHub Pages:
+   - Go to Settings → Pages
+   - Source: GitHub Actions
+
+4. Push to main branch and deployment will happen automatically
+
+#### Option B: Manual Deployment
+
+1. Update `vite.config.ts` if deploying to a subdirectory:
 ```typescript
 export default defineConfig({
-  base: '/<repository-name>/',  // Add this line
+  base: '/repository-name/', // Add your repository name
   plugins: [react()],
   // ...
 });
 ```
 
-Then rebuild:
+2. Build the project:
+```bash
+npm install
+npm run build
+```
+
+3. Deploy the `dist` folder:
+   - Push to `gh-pages` branch, OR
+   - Use Settings → Pages → Deploy from a branch → select `gh-pages`
+
+## Development
+
+### Local Development
+
+```bash
+# Install dependencies
+npm install
+
+# Start development server
+npm run dev
+```
+
+Visit `http://localhost:5173`
+
+### Build for Production
+
 ```bash
 npm run build
 ```
 
-### Option 2: Manual Deployment
+### Preview Production Build
 
-1. Build the project:
-   ```bash
-   npm install
-   npm run build
-   ```
-
-2. The `dist` folder contains your static site
-
-3. Upload the contents of `dist` to any static hosting service:
-   - Netlify
-   - Vercel
-   - GitHub Pages
-   - Any web server
-
-## Configuration
-
-### Adding/Modifying Users
-
-Edit `/public/config/users.json`:
-
-```json
-{
-  "users": [
-    {
-      "id": "unique-id",
-      "username": "user_login",
-      "password": "plaintext_password",
-      "fullName": "First Last",
-      "role": "admin|user|dealer|sm|global_admin",
-      "countryId": "latvia|poland|null",
-      "countryName": "Latvia|Poland|null"
-    }
-  ]
-}
+```bash
+npm run preview
 ```
 
-### Adding Countries
+## CSV Data Files
 
-Edit `/public/config/countries.json`:
-
-```json
-{
-  "countries": [
-    {
-      "id": "country_id",
-      "name": "Country Name",
-      "prefix": "CC"
-    }
-  ]
-}
-```
-
-### Configuring Visible Months
-
-Edit `/public/config/visible_months.json`:
-
-```json
-{
-  "country_id": {
-    "schedule": {
-      "months": ["September", "October", "November"],
-      "displayCount": 3
-    },
-    "mistake_statistics": {
-      "months": ["September", "October", "November"],
-      "displayCount": 3
-    },
-    "daily_mistakes": {
-      "months": ["September", "October", "November"],
-      "displayCount": 3
-    }
-  }
-}
-```
-
-## CSV Files
-
-Place your CSV files in `/public/<CountryName>/` directory following this naming convention:
+Place your CSV files in `/public/<CountryName>/` following this naming convention:
 
 - `Daily_Stats_<Month>.csv`
 - `Dealer_Shift_<Month>.csv`
@@ -135,45 +173,65 @@ Place your CSV files in `/public/<CountryName>/` directory following this naming
 
 Example: `/public/Latvia/Dealer_Shift_September.csv`
 
-## Features Not Available in Static Mode
+## Database Management
 
-The following features require a backend database and are disabled:
-- Training Academy
-- News & Updates
-- Real-time user management
+### Adding Countries
 
-These sections will show a "not available" message when accessed.
+Use the Global Admin panel to add countries through the UI, or directly in Supabase:
 
-## Development
-
-Run locally:
-```bash
-npm install
-npm run dev
+```sql
+INSERT INTO countries (name, prefix) VALUES ('Country Name', 'CN');
 ```
 
-Build for production:
-```bash
-npm run build
-```
+### Creating Additional Admins
 
-Preview production build:
-```bash
-npm run preview
-```
+Use the Global Admin panel → Add Admin section to create country-specific administrators.
 
-## Security Note
+## Security Notes
 
-⚠️ **Important**: Since this is a static site, all passwords are stored in plain text in the JSON configuration file. This is suitable for:
-- Internal tools
-- Demo/testing purposes
-- Non-sensitive data
+### Important Security Practices
 
-**Do not use this for production systems with sensitive data** without implementing proper authentication through a backend service.
+1. **Environment Variables**: Never commit `.env` to version control
+2. **Supabase Keys**:
+   - The anon key is safe to expose in frontend code (it's public)
+   - Never expose the service_role key in frontend
+3. **Row Level Security (RLS)**: All tables have RLS enabled - verify policies are correct
+4. **Password Changes**: Force users to change default passwords on first login
 
-## Browser Compatibility
+### CORS Configuration
 
-This app works in all modern browsers that support:
-- ES6+ JavaScript
-- LocalStorage API
-- Fetch API
+If deploying to a custom domain, update CORS settings in Supabase Dashboard:
+- Go to Authentication → URL Configuration
+- Add your GitHub Pages URL to "Site URL" and "Redirect URLs"
+
+## Troubleshooting
+
+### Build Fails
+- Check that all environment variables are set correctly
+- Run `npm install` to ensure dependencies are installed
+- Check for TypeScript errors: `npm run typecheck`
+
+### Can't Login
+- Verify Supabase credentials in `.env`
+- Check that migrations have been run in Supabase
+- Verify the global_admin user exists in the `users` table
+
+### Pages Not Loading
+- Check browser console for errors
+- Verify `base` path in `vite.config.ts` matches your repository name
+- Ensure GitHub Pages is enabled and pointing to correct source
+
+## Tech Stack
+
+- **Frontend**: React 18, TypeScript, Tailwind CSS, Vite
+- **Backend**: Supabase (PostgreSQL, Authentication, Real-time)
+- **Hosting**: GitHub Pages (Frontend), Supabase (Backend)
+- **Icons**: Lucide React
+
+## Additional Features
+
+- Progressive Web App (PWA) support
+- Multi-language support (7 languages)
+- Role-based access control
+- Real-time updates with Supabase
+- CSV file parsing and visualization
