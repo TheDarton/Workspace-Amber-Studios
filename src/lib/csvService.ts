@@ -49,7 +49,7 @@ export async function loadCSVFile(
   month: string
 ): Promise<string[][]> {
   const fileName = `${fileType}_${month}.csv`;
-  const filePath = `/${country}/${fileName}`;
+  const filePath = `${country}/${fileName}`;
 
   console.log(`[CSV Loader] Attempting to load from static files: ${filePath}`);
 
@@ -77,7 +77,7 @@ export async function checkFileExists(
   month: string
 ): Promise<boolean> {
   const fileName = `${fileType}_${month}.csv`;
-  const filePath = `/${country}/${fileName}`;
+  const filePath = `${country}/${fileName}`;
 
   try {
     const response = await fetch(filePath, { method: 'HEAD' });
