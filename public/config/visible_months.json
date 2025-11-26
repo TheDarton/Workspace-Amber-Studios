@@ -1,0 +1,30 @@
+{
+  "latvia": {
+    "schedule": {
+      "months": ["September", "October", "November"],
+      "displayCount": 3
+    },
+    "mistake_statistics": {
+      "months": ["September", "October", "November"],
+      "displayCount": 3
+    },
+    "daily_mistakes": {
+      "months": ["September", "October", "November"],
+      "displayCount": 3
+    }
+  },
+  "poland": {
+    "schedule": {
+      "months": [],
+      "displayCount": 3
+    },
+    "mistake_statistics": {
+      "months": [],
+      "displayCount": 3
+    },
+    "daily_mistakes": {
+      "months": [],
+      "displayCount": 3
+    }
+  }
+}
