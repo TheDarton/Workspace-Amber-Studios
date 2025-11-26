@@ -12,7 +12,7 @@ export function LoginPage() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [showChangePassword, setShowChangePassword] = useState(false);
-  const [, setTempUserId] = useState('');
+  const [tempUserId, setTempUserId] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
 
@@ -57,7 +57,7 @@ export function LoginPage() {
 
     setLoading(true);
     try {
-      const { error: updateError } = await updatePassword();
+      const { error: updateError } = await updatePassword(tempUserId, newPassword);
 
       if (updateError) {
         setError(updateError);
