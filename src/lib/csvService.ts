@@ -1,4 +1,3 @@
-import { supabase } from './supabase';
 import type {
   DailyStatsData,
   ShiftData,
@@ -50,21 +49,18 @@ export async function loadCSVFile(
   month: string
 ): Promise<string[][]> {
   const fileName = `${fileType}_${month}.csv`;
-  const filePath = `${country}/${fileName}`;
+  const filePath = `/${country}/${fileName}`;
 
-  console.log(`[CSV Loader] Attempting to load from Supabase Storage: ${filePath}`);
+  console.log(`[CSV Loader] Attempting to load from static files: ${filePath}`);
 
   try {
-    const { data, error } = await supabase.storage
-      .from('csv-files')
-      .download(filePath);
+    const response = await fetch(filePath);
 
-    if (error) {
-      console.error(`[CSV Loader] Supabase error for ${filePath}:`, error);
-      throw new Error(`Failed to load ${fileName}: ${error.message}`);
+    if (!response.ok) {
+      throw new Error(`Failed to load ${fileName}: ${response.statusText}`);
     }
 
-    const text = await data.text();
+    const text = await response.text();
     console.log(`[CSV Loader] Successfully loaded ${fileName}, size: ${text.length} bytes`);
     const parsed = parseCSVToArray(text);
     console.log(`[CSV Loader] Parsed into ${parsed.length} rows`);
@@ -81,16 +77,11 @@ export async function checkFileExists(
   month: string
 ): Promise<boolean> {
   const fileName = `${fileType}_${month}.csv`;
+  const filePath = `/${country}/${fileName}`;
 
   try {
-    const { data, error } = await supabase.storage
-      .from('csv-files')
-      .list(country, {
-        search: fileName
-      });
-
-    if (error) return false;
-    return data && data.length > 0;
+    const response = await fetch(filePath, { method: 'HEAD' });
+    return response.ok;
   } catch {
     return false;
   }
