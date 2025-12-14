@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import { LanguageSwitcher } from '../components/LanguageSwitcher';
 import { useTranslation } from '../hooks/useTranslation';
 import { signIn, updatePassword } from '../lib/auth';
 import { useAuth } from '../contexts/useAuth';
@@ -103,10 +102,6 @@ export function LoginPage() {
         </div>
 
         <div className="w-1/2 bg-white flex flex-col items-center justify-center p-12">
-          <div className="absolute top-8 right-8">
-            <LanguageSwitcher />
-          </div>
-
           <div className="w-full max-w-md">
             <h2 className="text-24 font-bold text-gray-900 mb-2">{t('login.changePasswordRequired')}</h2>
             <p className="text-14 text-gray-600 mb-8">{t('login.changePasswordSubtitle')}</p>
@@ -187,10 +182,6 @@ export function LoginPage() {
       </div>
 
       <div className="w-1/2 bg-white flex flex-col items-center justify-center p-12">
-        <div className="absolute top-8 right-8">
-          <LanguageSwitcher />
-        </div>
-
         <div className="w-full max-w-md">
           <h2 className="text-24 font-bold text-gray-900 mb-8">{t('login.title')}</h2>
 

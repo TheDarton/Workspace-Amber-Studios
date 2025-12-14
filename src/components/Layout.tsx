@@ -1,7 +1,6 @@
 import { ReactNode } from 'react';
 import { useAuth } from '../contexts/useAuth';
 import { useTranslation } from '../hooks/useTranslation';
-import { LanguageSwitcher } from './LanguageSwitcher';
 import { Building2, LogOut } from 'lucide-react';
 
 interface LayoutProps {
@@ -35,7 +34,6 @@ export function Layout({ children }: LayoutProps) {
           </div>
 
           <div className="flex items-center gap-4">
-            <LanguageSwitcher />
             <button
               onClick={handleLogout}
               className="flex items-center gap-2 px-4 py-2 text-14 text-gray-700 hover:text-amber hover:bg-amber-50 rounded-lg transition-colors"
