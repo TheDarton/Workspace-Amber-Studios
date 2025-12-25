@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useAuth } from '../contexts/useAuth';
 import { useTranslation } from '../hooks/useTranslation';
-import { Calendar, Search } from 'lucide-react';
+import { Calendar, Search, ChevronDown, ChevronRight } from 'lucide-react';
 import { loadCSVFile, parseShiftData, parseWHData } from '../lib/csvService';
 import { getVisibleMonthsForSection, getDisplayCount } from '../lib/configService';
 import ShiftCalendar from '../components/ShiftCalendar';
@@ -10,10 +10,8 @@ import type { ShiftData, WHData } from '../lib/csvTypes';
 
 interface PersonData {
   name: string;
-  dealerShift?: ShiftData;
-  dealerWH?: WHData;
-  smShift?: ShiftData;
-  smWH?: WHData;
+  shift?: ShiftData;
+  wh?: WHData;
 }
 
 export function SchedulePage({ countryName, countryId }: { countryName: string; countryId: string }) {
@@ -29,6 +27,7 @@ export function SchedulePage({ countryName, countryId }: { countryName: string; 
   const [loading, setLoading] = useState(false);
   const [loadingMonths, setLoadingMonths] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
+  const [expandedPeople, setExpandedPeople] = useState<Set<string>>(new Set());
 
   useEffect(() => {
     loadMonths();
@@ -120,89 +119,117 @@ export function SchedulePage({ countryName, countryId }: { countryName: string; 
     ? `${user.name} ${user.surname}`
     : undefined;
 
-  const groupedData = useMemo(() => {
+  const togglePerson = (key: string) => {
+    setExpandedPeople(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(key)) {
+        newSet.delete(key);
+      } else {
+        newSet.add(key);
+      }
+      return newSet;
+    });
+  };
+
+  const dealerData = useMemo(() => {
     const peopleMap = new Map<string, PersonData>();
 
     if (dealerShiftData) {
       dealerShiftData.rows.forEach(row => {
         const name = row.nameSurname;
+        if (name === '///' || !name.trim()) return;
         if (!peopleMap.has(name)) {
           peopleMap.set(name, { name });
         }
         const person = peopleMap.get(name)!;
-        if (!person.dealerShift) {
-          person.dealerShift = {
+        if (!person.shift) {
+          person.shift = {
             ...dealerShiftData,
             rows: []
           };
         }
-        person.dealerShift.rows.push(row);
+        person.shift.rows.push(row);
       });
     }
 
     if (dealerWHData) {
       dealerWHData.rows.forEach(row => {
         const name = row.nameSurname;
+        if (name === '///' || !name.trim()) return;
         if (!peopleMap.has(name)) {
           peopleMap.set(name, { name });
         }
         const person = peopleMap.get(name)!;
-        if (!person.dealerWH) {
-          person.dealerWH = {
+        if (!person.wh) {
+          person.wh = {
             ...dealerWHData,
             rows: []
           };
         }
-        person.dealerWH.rows.push(row);
+        person.wh.rows.push(row);
       });
     }
+
+    return Array.from(peopleMap.values());
+  }, [dealerShiftData, dealerWHData]);
+
+  const smData = useMemo(() => {
+    const peopleMap = new Map<string, PersonData>();
 
     if (smShiftData) {
       smShiftData.rows.forEach(row => {
         const name = row.nameSurname;
+        if (name === '///' || !name.trim()) return;
         if (!peopleMap.has(name)) {
           peopleMap.set(name, { name });
         }
         const person = peopleMap.get(name)!;
-        if (!person.smShift) {
-          person.smShift = {
+        if (!person.shift) {
+          person.shift = {
             ...smShiftData,
             rows: []
           };
         }
-        person.smShift.rows.push(row);
+        person.shift.rows.push(row);
       });
     }
 
     if (smWHData) {
       smWHData.rows.forEach(row => {
         const name = row.nameSurname;
+        if (name === '///' || !name.trim()) return;
         if (!peopleMap.has(name)) {
           peopleMap.set(name, { name });
         }
         const person = peopleMap.get(name)!;
-        if (!person.smWH) {
-          person.smWH = {
+        if (!person.wh) {
+          person.wh = {
             ...smWHData,
             rows: []
           };
         }
-        person.smWH.rows.push(row);
+        person.wh.rows.push(row);
       });
     }
 
-    return Array.from(peopleMap.values())
-      .filter(person => person.name !== '///' && person.name.trim() !== '')
-      .sort((a, b) => a.name.localeCompare(b.name));
-  }, [dealerShiftData, dealerWHData, smShiftData, smWHData]);
+    return Array.from(peopleMap.values());
+  }, [smShiftData, smWHData]);
 
-  const filteredData = useMemo(() => {
-    if (!searchQuery.trim()) return groupedData;
+  const filteredDealerData = useMemo(() => {
+    if (!searchQuery.trim()) return dealerData;
     const query = searchQuery.toLowerCase();
-    return groupedData.filter(person =>
+    return dealerData.filter(person =>
       person.name.toLowerCase().includes(query)
     );
-  }, [groupedData, searchQuery]);
+  }, [dealerData, searchQuery]);
+
+  const filteredSMData = useMemo(() => {
+    if (!searchQuery.trim()) return smData;
+    const query = searchQuery.toLowerCase();
+    return smData.filter(person =>
+      person.name.toLowerCase().includes(query)
+    );
+  }, [smData, searchQuery]);
 
   if (loadingMonths) {
     return (
@@ -281,7 +308,7 @@ export function SchedulePage({ countryName, countryId }: { countryName: string; 
         </div>
       ) : (
         <div className="space-y-8">
-          {filteredData.length === 0 ? (
+          {filteredDealerData.length === 0 && filteredSMData.length === 0 ? (
             <div className="bg-white rounded-lg border border-gray-200 p-8 text-center">
               <p className="text-gray-500">
                 {searchQuery ? 'No people found matching your search' : 'No schedule data available for ' + selectedMonth}
@@ -293,41 +320,101 @@ export function SchedulePage({ countryName, countryId }: { countryName: string; 
               )}
             </div>
           ) : (
-            filteredData.map((person) => (
-              <div key={person.name} className="space-y-4">
-                <h2 className="text-xl font-bold text-gray-900 border-b-2 border-[#0891b2] pb-2">
-                  {person.name}
-                </h2>
+            <>
+              {filteredDealerData.length > 0 && (
+                <div>
+                  <h2 className="text-2xl font-bold text-gray-900 mb-4 border-b-2 border-[#0891b2] pb-2">
+                    Dealers
+                  </h2>
+                  <div className="space-y-3">
+                    {filteredDealerData.map((person) => {
+                      const key = `dealer-${person.name}`;
+                      const isExpanded = expandedPeople.has(key);
+                      return (
+                        <div key={key} className="border border-gray-200 rounded-lg overflow-hidden shadow-sm">
+                          <button
+                            onClick={() => togglePerson(key)}
+                            className="w-full bg-[#0891b2] text-white px-4 py-3 font-semibold flex items-center gap-3 hover:bg-[#0e7490] transition-colors cursor-pointer"
+                          >
+                            {isExpanded ? (
+                              <ChevronDown className="w-5 h-5 flex-shrink-0" />
+                            ) : (
+                              <ChevronRight className="w-5 h-5 flex-shrink-0" />
+                            )}
+                            <span>{person.name}</span>
+                          </button>
 
-                {person.dealerShift && (
-                  <div>
-                    <h3 className="text-md font-semibold text-gray-700 mb-2">Dealer Shift Schedule</h3>
-                    <ShiftCalendar data={person.dealerShift} />
-                  </div>
-                )}
+                          {isExpanded && (
+                            <div className="p-4 space-y-4 bg-gray-50">
+                              {person.shift && (
+                                <div>
+                                  <h3 className="text-md font-semibold text-gray-700 mb-2">Shift Schedule</h3>
+                                  <ShiftCalendar data={person.shift} />
+                                </div>
+                              )}
 
-                {person.dealerWH && (
-                  <div>
-                    <h3 className="text-md font-semibold text-gray-700 mb-2">Dealer Working Hours</h3>
-                    <WHTable data={person.dealerWH} />
+                              {person.wh && (
+                                <div>
+                                  <h3 className="text-md font-semibold text-gray-700 mb-2">Working Hours</h3>
+                                  <WHTable data={person.wh} />
+                                </div>
+                              )}
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })}
                   </div>
-                )}
+                </div>
+              )}
 
-                {person.smShift && (
-                  <div>
-                    <h3 className="text-md font-semibold text-gray-700 mb-2">SM Shift Schedule</h3>
-                    <ShiftCalendar data={person.smShift} />
-                  </div>
-                )}
+              {filteredSMData.length > 0 && (
+                <div>
+                  <h2 className="text-2xl font-bold text-gray-900 mb-4 border-b-2 border-[#0891b2] pb-2">
+                    Shift Managers
+                  </h2>
+                  <div className="space-y-3">
+                    {filteredSMData.map((person) => {
+                      const key = `sm-${person.name}`;
+                      const isExpanded = expandedPeople.has(key);
+                      return (
+                        <div key={key} className="border border-gray-200 rounded-lg overflow-hidden shadow-sm">
+                          <button
+                            onClick={() => togglePerson(key)}
+                            className="w-full bg-[#0891b2] text-white px-4 py-3 font-semibold flex items-center gap-3 hover:bg-[#0e7490] transition-colors cursor-pointer"
+                          >
+                            {isExpanded ? (
+                              <ChevronDown className="w-5 h-5 flex-shrink-0" />
+                            ) : (
+                              <ChevronRight className="w-5 h-5 flex-shrink-0" />
+                            )}
+                            <span>{person.name}</span>
+                          </button>
 
-                {person.smWH && (
-                  <div>
-                    <h3 className="text-md font-semibold text-gray-700 mb-2">SM Working Hours</h3>
-                    <WHTable data={person.smWH} />
+                          {isExpanded && (
+                            <div className="p-4 space-y-4 bg-gray-50">
+                              {person.shift && (
+                                <div>
+                                  <h3 className="text-md font-semibold text-gray-700 mb-2">Shift Schedule</h3>
+                                  <ShiftCalendar data={person.shift} />
+                                </div>
+                              )}
+
+                              {person.wh && (
+                                <div>
+                                  <h3 className="text-md font-semibold text-gray-700 mb-2">Working Hours</h3>
+                                  <WHTable data={person.wh} />
+                                </div>
+                              )}
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })}
                   </div>
-                )}
-              </div>
-            ))
+                </div>
+              )}
+            </>
           )}
         </div>
       )}
