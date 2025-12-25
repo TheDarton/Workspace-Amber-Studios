@@ -118,7 +118,7 @@ export default function WHTable({ data, userName }: WHTableProps) {
 
   return (
     <div className="border border-gray-200 rounded-lg overflow-hidden shadow-sm">
-      <div className="bg-[#4F06A7] text-white px-4 py-2 font-semibold">
+      <div className="bg-[#0891b2] text-white px-4 py-2 font-semibold">
         Working Hours - {data.month} {data.year}
       </div>
 
