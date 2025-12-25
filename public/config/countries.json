@@ -1,0 +1,14 @@
+{
+  "countries": [
+    {
+      "id": "latvia",
+      "name": "Latvia",
+      "prefix": "LV"
+    },
+    {
+      "id": "poland",
+      "name": "Poland",
+      "prefix": "PL"
+    }
+  ]
+}

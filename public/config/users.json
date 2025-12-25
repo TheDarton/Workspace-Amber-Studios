@@ -1,0 +1,13 @@
+{
+  "users": [
+    {
+      "id": "1",
+      "username": "global_admin",
+      "password": "admin123",
+      "fullName": "Global Admin",
+      "role": "global_admin",
+      "countryId": null,
+      "countryName": null
+    }
+  ]
+}
