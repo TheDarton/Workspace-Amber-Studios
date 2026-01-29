@@ -129,6 +129,8 @@ export async function setVisibleMonth(
       .eq('priority', priority)
       .maybeSingle();
 
+    console.log('[Visible Months] Check result:', { existing, checkError });
+
     if (checkError && checkError.code !== 'PGRST116') {
       console.error('[Visible Months] Error checking existing record:', checkError);
       return false;
@@ -136,15 +138,20 @@ export async function setVisibleMonth(
 
     let error;
     if (existing) {
+      console.log('[Visible Months] Updating existing record:', existing.id);
       const result = await supabase
         .from('visible_months')
         .update({
           month,
           updated_at: new Date().toISOString(),
         })
-        .eq('id', existing.id);
+        .eq('country_id', countryId)
+        .eq('section', section)
+        .eq('priority', priority);
       error = result.error;
+      console.log('[Visible Months] Update result:', { error });
     } else {
+      console.log('[Visible Months] Inserting new record');
       const result = await supabase
         .from('visible_months')
         .insert({
@@ -155,6 +162,7 @@ export async function setVisibleMonth(
           updated_at: new Date().toISOString(),
         });
       error = result.error;
+      console.log('[Visible Months] Insert result:', { error });
     }
 
     if (error) {
@@ -252,6 +260,8 @@ export async function setDisplayCount(
       .eq('country_id', countryId)
       .maybeSingle();
 
+    console.log('[Display Count] Check result:', { existing, checkError });
+
     if (checkError && checkError.code !== 'PGRST116') {
       console.error('[Display Count] Error checking existing record:', checkError);
       return false;
@@ -259,15 +269,18 @@ export async function setDisplayCount(
 
     let error;
     if (existing) {
+      console.log('[Display Count] Updating existing record:', existing.id);
       const result = await supabase
         .from('visible_months_settings')
         .update({
           display_count: displayCount,
           updated_at: new Date().toISOString(),
         })
-        .eq('id', existing.id);
+        .eq('country_id', countryId);
       error = result.error;
+      console.log('[Display Count] Update result:', { error });
     } else {
+      console.log('[Display Count] Inserting new record');
       const result = await supabase
         .from('visible_months_settings')
         .insert({
@@ -276,6 +289,7 @@ export async function setDisplayCount(
           updated_at: new Date().toISOString(),
         });
       error = result.error;
+      console.log('[Display Count] Insert result:', { error });
     }
 
     if (error) {
