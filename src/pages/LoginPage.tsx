@@ -21,12 +21,16 @@ export function LoginPage() {
     setLoading(true);
 
     try {
+      console.log('[LoginPage] Attempting login...');
       const { user, error: authError } = await signIn(login, password);
 
       if (authError || !user) {
-        setError(t('login.invalidCredentials'));
+        console.error('[LoginPage] Login failed:', authError);
+        setError(authError || t('login.invalidCredentials'));
         return;
       }
+
+      console.log('[LoginPage] Login successful, user:', user.login);
 
       if (user.must_change_password) {
         setTempUserId(user.id);
@@ -35,6 +39,9 @@ export function LoginPage() {
       }
 
       setUser(user);
+    } catch (err) {
+      console.error('[LoginPage] Exception during login:', err);
+      setError('An unexpected error occurred. Please try again.');
     } finally {
       setLoading(false);
     }

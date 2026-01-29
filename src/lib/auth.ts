@@ -17,24 +17,33 @@ export interface User {
 
 export async function signIn(login: string, password: string): Promise<{ user: User | null; error: string | null }> {
   try {
+    console.log('[Auth] Attempting login for:', login);
+
     const { data: userData, error: queryError } = await supabase
       .from('users')
       .select('*')
       .eq('login', login)
       .maybeSingle();
 
+    console.log('[Auth] Query result:', { hasData: !!userData, error: queryError });
+
     if (queryError) {
-      console.error('Database query error:', queryError);
-      return { user: null, error: 'Authentication failed' };
+      console.error('[Auth] Database query error:', queryError);
+      return { user: null, error: `Authentication failed: ${queryError.message}` };
     }
 
     if (!userData) {
+      console.log('[Auth] No user found with login:', login);
       return { user: null, error: 'Invalid login or password' };
     }
 
+    console.log('[Auth] User found, checking password');
     if (userData.password_hash !== password) {
+      console.log('[Auth] Password mismatch');
       return { user: null, error: 'Invalid login or password' };
     }
+
+    console.log('[Auth] Login successful for:', login);
 
     const user: User = {
       id: userData.id,
@@ -122,5 +131,11 @@ export async function getUser(userId: string): Promise<{ user: User | null; erro
 }
 
 export function signOut(): void {
+  console.log('[Auth] Signing out user');
   localStorage.removeItem('currentUser');
+}
+
+export function clearAuthData(): void {
+  console.log('[Auth] Clearing all auth data');
+  localStorage.clear();
 }
