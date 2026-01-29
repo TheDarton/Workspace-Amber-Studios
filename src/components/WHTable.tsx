@@ -63,8 +63,8 @@ export default function WHTable({ data, userName }: WHTableProps) {
             <table className="w-full border-collapse">
               <thead>
                 <tr>
-                  <th className="px-2 py-2 text-xs sm:text-sm font-semibold bg-blue-100 border-b border-r border-gray-300 text-gray-700 w-12">
-                    D/N
+                  <th className="px-2 py-2 text-xs sm:text-sm font-semibold bg-blue-100 border-b border-r border-gray-300 text-gray-700 w-20">
+                    Day Night
                   </th>
                   <th className="px-2 py-2 text-xs sm:text-sm font-semibold bg-blue-100 border-b border-r border-gray-300 text-gray-700 w-16">
                     Total
@@ -92,7 +92,7 @@ export default function WHTable({ data, userName }: WHTableProps) {
               <tbody>
                 <tr>
                   <td className="px-2 py-2 text-xs sm:text-sm font-bold text-center bg-amber-50 border-b border-r border-gray-300 text-gray-700">
-                    D
+                    Day
                   </td>
                   <td className="px-2 py-2 text-xs sm:text-sm font-bold text-center bg-amber-50 border-b border-r border-gray-300 text-gray-900">
                     {group.dayRow.totalHours}
@@ -117,7 +117,7 @@ export default function WHTable({ data, userName }: WHTableProps) {
                 </tr>
                 <tr>
                   <td className="px-2 py-2 text-xs sm:text-sm font-bold text-center bg-blue-100 border-r border-gray-300 text-gray-700">
-                    N
+                    Night
                   </td>
                   <td className="px-2 py-2 text-xs sm:text-sm font-bold text-center bg-blue-100 border-r border-gray-300 text-gray-900">
                     {group.nightRow?.totalHours || '-'}
