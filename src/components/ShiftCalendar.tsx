@@ -68,13 +68,13 @@ export default function ShiftCalendar({ data, userName }: ShiftCalendarProps) {
       {filteredRows.map((row, idx) => (
         <div key={idx} className="border border-gray-200 rounded-lg overflow-hidden shadow-sm">
           <div className="overflow-x-auto">
-            <table className="w-full border-collapse min-w-[500px]">
+            <table className="w-full border-collapse">
               <thead>
                 <tr>
                   {weekDays.map((day, i) => (
                     <th
                       key={day}
-                      className={`px-1 sm:px-2 py-2 sm:py-3 text-xs sm:text-sm font-semibold border-b border-r border-gray-200 ${
+                      className={`px-0.5 sm:px-1 lg:px-2 py-1 sm:py-2 lg:py-3 text-[10px] sm:text-xs lg:text-sm font-semibold border-b border-r border-gray-200 ${
                         i >= 5 ? 'bg-red-50 text-red-700' : 'bg-gray-50 text-gray-700'
                       }`}
                       style={{ width: '14.28%' }}
@@ -86,7 +86,7 @@ export default function ShiftCalendar({ data, userName }: ShiftCalendarProps) {
               </thead>
               <tbody>
                 {calendarData.weeks.map((week, weekIdx) => (
-                  <tr key={weekIdx} className="h-[70px] sm:h-[85px]">
+                  <tr key={weekIdx} className="h-[50px] sm:h-[70px] lg:h-[85px]">
                     {week.map((date, dayIdx) => {
                       const day = date.getDate();
                       const month = date.getMonth();
@@ -107,7 +107,7 @@ export default function ShiftCalendar({ data, userName }: ShiftCalendarProps) {
                               : undefined
                           }
                         >
-                          <span className={`absolute top-1 sm:top-2 right-1 sm:right-2 inline-flex items-center justify-center w-6 h-6 sm:w-7 sm:h-7 text-xs sm:text-sm font-semibold rounded-lg z-10 ${
+                          <span className={`absolute top-0.5 sm:top-1 lg:top-2 right-0.5 sm:right-1 lg:right-2 inline-flex items-center justify-center w-5 h-5 sm:w-6 sm:h-6 lg:w-7 lg:h-7 text-[10px] sm:text-xs lg:text-sm font-semibold rounded z-10 ${
                             isCurrentMonth
                               ? isWeekendDay
                                 ? 'bg-red-100 text-red-700 border border-red-200'
@@ -118,7 +118,7 @@ export default function ShiftCalendar({ data, userName }: ShiftCalendarProps) {
                           </span>
                           {isCurrentMonth && shift && shift !== '0' && (
                             <div className="h-full w-full flex items-center justify-center">
-                              <span className="text-2xl sm:text-3xl font-bold text-gray-800">
+                              <span className="text-lg sm:text-2xl lg:text-3xl font-bold text-gray-800">
                                 {shift}
                               </span>
                             </div>

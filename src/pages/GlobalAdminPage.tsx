@@ -361,20 +361,20 @@ export function GlobalAdminPage() {
       <div className="flex h-[calc(100vh-73px)] relative">
         <button
           onClick={() => setSidebarOpen(!sidebarOpen)}
-          className="lg:hidden fixed bottom-4 right-4 z-50 bg-[#FFA500] text-white p-3 rounded-full shadow-lg hover:bg-[#FF8C00] transition-colors"
+          className="lg:hidden fixed bottom-4 right-4 z-[60] bg-[#FFA500] text-white p-3 rounded-full shadow-lg hover:bg-[#FF8C00] transition-colors"
         >
           {sidebarOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
         </button>
 
         {sidebarOpen && (
           <div
-            className="lg:hidden fixed inset-0 bg-black/50 z-30"
+            className="lg:hidden fixed inset-0 bg-black/50 z-[35]"
             onClick={() => setSidebarOpen(false)}
           />
         )}
 
         <aside className={`
-          fixed lg:relative inset-y-0 left-0 z-40 w-64 bg-white border-r border-gray-200 p-4 lg:p-6
+          fixed lg:relative top-[73px] lg:top-0 bottom-0 left-0 z-40 w-64 bg-white border-r border-gray-200 p-4 lg:p-6
           transform transition-transform duration-200 ease-in-out
           ${sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
           overflow-y-auto
