@@ -3,7 +3,7 @@ import { useAuth } from '../contexts/useAuth';
 import { useTranslation } from '../hooks/useTranslation';
 import { BarChart } from 'lucide-react';
 import { loadCSVFile, parseDailyStats } from '../lib/csvService';
-import { getVisibleMonthsForSection, getDisplayCount } from '../lib/configService';
+import { getVisibleMonthsForSection, getDisplayCount } from '../lib/visibleMonthsService';
 import type { DailyStatsData, DailyStatsRow } from '../lib/csvTypes';
 import { isWeekend } from '../lib/csvTypes';
 

@@ -3,7 +3,7 @@ import { useAuth } from '../contexts/useAuth';
 import { useTranslation } from '../hooks/useTranslation';
 import { Calendar, Search, ChevronDown, ChevronRight } from 'lucide-react';
 import { loadCSVFile, parseShiftData, parseWHData } from '../lib/csvService';
-import { getVisibleMonthsForSection, getDisplayCount } from '../lib/configService';
+import { getVisibleMonthsForSection, getDisplayCount } from '../lib/visibleMonthsService';
 import ShiftCalendar from '../components/ShiftCalendar';
 import WHTable from '../components/WHTable';
 import type { ShiftData, WHData } from '../lib/csvTypes';

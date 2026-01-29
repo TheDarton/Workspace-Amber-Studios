@@ -3,7 +3,7 @@ import { useAuth } from '../contexts/useAuth';
 import { useTranslation } from '../hooks/useTranslation';
 import { BarChart } from 'lucide-react';
 import { loadCSVFile, parseMistakeStats } from '../lib/csvService';
-import { getVisibleMonthsForSection, getDisplayCount } from '../lib/configService';
+import { getVisibleMonthsForSection, getDisplayCount } from '../lib/visibleMonthsService';
 import type { MistakeStatsData, MistakeStatsRow } from '../lib/csvTypes';
 
 interface CategoryTableProps {
