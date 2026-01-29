@@ -64,17 +64,17 @@ export default function ShiftCalendar({ data, userName }: ShiftCalendarProps) {
   const weekDays = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
 
   return (
-    <div className="space-y-3">
+    <div className="space-y-2 sm:space-y-3">
       {filteredRows.map((row, idx) => (
         <div key={idx} className="border border-gray-200 rounded-lg overflow-hidden shadow-sm">
           <div className="overflow-x-auto">
-            <table className="w-full border-collapse">
+            <table className="w-full border-collapse min-w-[500px]">
               <thead>
                 <tr>
                   {weekDays.map((day, i) => (
                     <th
                       key={day}
-                      className={`px-2 py-3 text-sm font-semibold border-b border-r border-gray-200 ${
+                      className={`px-1 sm:px-2 py-2 sm:py-3 text-xs sm:text-sm font-semibold border-b border-r border-gray-200 ${
                         i >= 5 ? 'bg-red-50 text-red-700' : 'bg-gray-50 text-gray-700'
                       }`}
                       style={{ width: '14.28%' }}
@@ -86,7 +86,7 @@ export default function ShiftCalendar({ data, userName }: ShiftCalendarProps) {
               </thead>
               <tbody>
                 {calendarData.weeks.map((week, weekIdx) => (
-                  <tr key={weekIdx} className="h-[85px]">
+                  <tr key={weekIdx} className="h-[70px] sm:h-[85px]">
                     {week.map((date, dayIdx) => {
                       const day = date.getDate();
                       const month = date.getMonth();
@@ -107,7 +107,7 @@ export default function ShiftCalendar({ data, userName }: ShiftCalendarProps) {
                               : undefined
                           }
                         >
-                          <span className={`absolute top-2 right-2 inline-flex items-center justify-center w-7 h-7 text-sm font-semibold rounded-lg z-10 ${
+                          <span className={`absolute top-1 sm:top-2 right-1 sm:right-2 inline-flex items-center justify-center w-6 h-6 sm:w-7 sm:h-7 text-xs sm:text-sm font-semibold rounded-lg z-10 ${
                             isCurrentMonth
                               ? isWeekendDay
                                 ? 'bg-red-100 text-red-700 border border-red-200'
@@ -118,7 +118,7 @@ export default function ShiftCalendar({ data, userName }: ShiftCalendarProps) {
                           </span>
                           {isCurrentMonth && shift && shift !== '0' && (
                             <div className="h-full w-full flex items-center justify-center">
-                              <span className="text-3xl font-bold text-gray-800">
+                              <span className="text-2xl sm:text-3xl font-bold text-gray-800">
                                 {shift}
                               </span>
                             </div>
@@ -132,26 +132,26 @@ export default function ShiftCalendar({ data, userName }: ShiftCalendarProps) {
             </table>
           </div>
 
-          <div className="bg-gray-50 px-4 py-3 border-t border-gray-200">
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
-              <div className="flex items-center gap-2">
-                <span className="w-3 h-3 rounded-full bg-[#0891b2]"></span>
-                <span className="text-gray-600">Total Shifts:</span>
+          <div className="bg-gray-50 px-3 sm:px-4 py-2 sm:py-3 border-t border-gray-200">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-2 sm:gap-4 text-xs sm:text-sm">
+              <div className="flex items-center gap-1 sm:gap-2">
+                <span className="w-2 h-2 sm:w-3 sm:h-3 rounded-full bg-[#0891b2] flex-shrink-0"></span>
+                <span className="text-gray-600 truncate">Total:</span>
                 <span className="font-semibold text-gray-900">{row.totalShifts}</span>
               </div>
-              <div className="flex items-center gap-2">
-                <span className="w-3 h-3 rounded-full bg-amber-400"></span>
-                <span className="text-gray-600">Day Shifts:</span>
+              <div className="flex items-center gap-1 sm:gap-2">
+                <span className="w-2 h-2 sm:w-3 sm:h-3 rounded-full bg-amber-400 flex-shrink-0"></span>
+                <span className="text-gray-600 truncate">Day:</span>
                 <span className="font-semibold text-gray-900">{row.dayShifts}</span>
               </div>
-              <div className="flex items-center gap-2">
-                <span className="w-3 h-3 rounded-full bg-blue-500"></span>
-                <span className="text-gray-600">Night Shifts:</span>
+              <div className="flex items-center gap-1 sm:gap-2">
+                <span className="w-2 h-2 sm:w-3 sm:h-3 rounded-full bg-blue-500 flex-shrink-0"></span>
+                <span className="text-gray-600 truncate">Night:</span>
                 <span className="font-semibold text-gray-900">{row.nightShifts}</span>
               </div>
-              <div className="flex items-center gap-2">
-                <span className="w-3 h-3 rounded-full bg-green-500"></span>
-                <span className="text-gray-600">By Call:</span>
+              <div className="flex items-center gap-1 sm:gap-2">
+                <span className="w-2 h-2 sm:w-3 sm:h-3 rounded-full bg-green-500 flex-shrink-0"></span>
+                <span className="text-gray-600 truncate">Call:</span>
                 <span className="font-semibold text-gray-900">{row.byCall}</span>
               </div>
             </div>

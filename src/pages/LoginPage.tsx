@@ -74,18 +74,18 @@ export function LoginPage() {
 
   if (showChangePassword) {
     return (
-      <div className="min-h-screen flex">
-        <div className="w-1/2 bg-[#FFA500] flex flex-col items-center justify-center p-12 text-white">
+      <div className="min-h-screen flex flex-col lg:flex-row">
+        <div className="lg:w-1/2 bg-[#FFA500] flex flex-col items-center justify-center p-6 sm:p-8 lg:p-12 text-white">
           <div className="max-w-md text-center">
-            <div className="mb-8 p-8 bg-white/95 backdrop-blur-sm rounded-2xl shadow-lg">
+            <div className="mb-6 sm:mb-8 p-4 sm:p-6 lg:p-8 bg-white/95 backdrop-blur-sm rounded-2xl shadow-lg">
               <img
                 src="/amber-studios-logo.png"
                 alt="Amber Studios Logo"
-                className="w-80 h-auto mx-auto"
+                className="w-48 sm:w-64 lg:w-80 h-auto mx-auto"
               />
             </div>
-            <h1 className="text-24 font-bold mb-4">{t('login.workspace')}</h1>
-            <p className="text-16 opacity-90">
+            <h1 className="text-18 sm:text-20 lg:text-24 font-bold mb-3 sm:mb-4">{t('login.workspace')}</h1>
+            <p className="text-13 sm:text-14 lg:text-16 opacity-90">
               {t('login.managementSystemFor')}{' '}
               <a
                 href="https://amber-studios.com"
@@ -101,40 +101,40 @@ export function LoginPage() {
           </div>
         </div>
 
-        <div className="w-1/2 bg-white flex flex-col items-center justify-center p-12">
+        <div className="lg:w-1/2 bg-white flex flex-col items-center justify-center p-6 sm:p-8 lg:p-12">
           <div className="w-full max-w-md">
-            <h2 className="text-24 font-bold text-gray-900 mb-2">{t('login.changePasswordRequired')}</h2>
-            <p className="text-14 text-gray-600 mb-8">{t('login.changePasswordSubtitle')}</p>
+            <h2 className="text-20 sm:text-22 lg:text-24 font-bold text-gray-900 mb-2">{t('login.changePasswordRequired')}</h2>
+            <p className="text-13 sm:text-14 text-gray-600 mb-6 sm:mb-8">{t('login.changePasswordSubtitle')}</p>
 
             {error && (
-              <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700 text-14">
+              <div className="mb-4 sm:mb-6 p-3 sm:p-4 bg-red-50 border border-red-200 rounded-lg text-red-700 text-13 sm:text-14">
                 {error}
               </div>
             )}
 
-            <form onSubmit={handleChangePassword} className="space-y-6">
+            <form onSubmit={handleChangePassword} className="space-y-4 sm:space-y-6">
               <div>
-                <label className="block text-14 font-medium text-gray-700 mb-2">
+                <label className="block text-13 sm:text-14 font-medium text-gray-700 mb-2">
                   {t('login.newPassword')}
                 </label>
                 <input
                   type="password"
                   value={newPassword}
                   onChange={(e) => setNewPassword(e.target.value)}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber focus:border-transparent"
+                  className="w-full px-3 sm:px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber focus:border-transparent text-base"
                   required
                 />
               </div>
 
               <div>
-                <label className="block text-14 font-medium text-gray-700 mb-2">
+                <label className="block text-13 sm:text-14 font-medium text-gray-700 mb-2">
                   {t('login.confirmPassword')}
                 </label>
                 <input
                   type="password"
                   value={confirmPassword}
                   onChange={(e) => setConfirmPassword(e.target.value)}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber focus:border-transparent"
+                  className="w-full px-3 sm:px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber focus:border-transparent text-base"
                   required
                 />
               </div>
@@ -142,7 +142,7 @@ export function LoginPage() {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full bg-amber hover:bg-amber-600 text-white font-semibold py-3 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full bg-amber hover:bg-amber-600 text-white font-semibold py-3 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-base"
               >
                 {loading ? t('common.loading') : t('login.changePasswordButton')}
               </button>
@@ -154,18 +154,18 @@ export function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex">
-      <div className="w-1/2 bg-[#FFA500] flex flex-col items-center justify-center p-12 text-white">
+    <div className="min-h-screen flex flex-col lg:flex-row">
+      <div className="lg:w-1/2 bg-[#FFA500] flex flex-col items-center justify-center p-6 sm:p-8 lg:p-12 text-white">
         <div className="max-w-md text-center">
-          <div className="mb-8 p-8 bg-white/95 backdrop-blur-sm rounded-2xl shadow-lg">
+          <div className="mb-6 sm:mb-8 p-4 sm:p-6 lg:p-8 bg-white/95 backdrop-blur-sm rounded-2xl shadow-lg">
             <img
               src="/amber-studios-logo.png"
               alt="Amber Studios Logo"
-              className="w-80 h-auto mx-auto"
+              className="w-48 sm:w-64 lg:w-80 h-auto mx-auto"
             />
           </div>
-          <h1 className="text-24 font-bold mb-4">{t('login.workspace')}</h1>
-          <p className="text-16 opacity-90">
+          <h1 className="text-18 sm:text-20 lg:text-24 font-bold mb-3 sm:mb-4">{t('login.workspace')}</h1>
+          <p className="text-13 sm:text-14 lg:text-16 opacity-90">
             {t('login.managementSystemFor')}{' '}
             <a
               href="https://amber-studios.com"
@@ -181,39 +181,39 @@ export function LoginPage() {
         </div>
       </div>
 
-      <div className="w-1/2 bg-white flex flex-col items-center justify-center p-12">
+      <div className="lg:w-1/2 bg-white flex flex-col items-center justify-center p-6 sm:p-8 lg:p-12">
         <div className="w-full max-w-md">
-          <h2 className="text-24 font-bold text-gray-900 mb-8">{t('login.title')}</h2>
+          <h2 className="text-20 sm:text-22 lg:text-24 font-bold text-gray-900 mb-6 sm:mb-8">{t('login.title')}</h2>
 
           {error && (
-            <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700 text-14">
+            <div className="mb-4 sm:mb-6 p-3 sm:p-4 bg-red-50 border border-red-200 rounded-lg text-red-700 text-13 sm:text-14">
               {error}
             </div>
           )}
 
-          <form onSubmit={handleLogin} className="space-y-6">
+          <form onSubmit={handleLogin} className="space-y-4 sm:space-y-6">
             <div>
-              <label className="block text-14 font-medium text-gray-700 mb-2">
+              <label className="block text-13 sm:text-14 font-medium text-gray-700 mb-2">
                 {t('login.loginPlaceholder')}
               </label>
               <input
                 type="text"
                 value={login}
                 onChange={(e) => setLogin(e.target.value)}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber focus:border-transparent"
+                className="w-full px-3 sm:px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber focus:border-transparent text-base"
                 required
               />
             </div>
 
             <div>
-              <label className="block text-14 font-medium text-gray-700 mb-2">
+              <label className="block text-13 sm:text-14 font-medium text-gray-700 mb-2">
                 {t('login.passwordPlaceholder')}
               </label>
               <input
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber focus:border-transparent"
+                className="w-full px-3 sm:px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber focus:border-transparent text-base"
                 required
               />
             </div>
@@ -221,14 +221,14 @@ export function LoginPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-amber hover:bg-amber-600 text-white font-semibold py-3 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full bg-amber hover:bg-amber-600 text-white font-semibold py-3 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-base"
             >
               {loading ? t('common.loading') : t('login.loginButton')}
             </button>
 
             <button
               type="button"
-              className="w-full text-14 text-gray-600 hover:text-amber transition-colors"
+              className="w-full text-13 sm:text-14 text-gray-600 hover:text-amber transition-colors"
             >
               {t('login.forgotPassword')}
             </button>

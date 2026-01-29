@@ -264,19 +264,19 @@ export function SchedulePage({ countryName, countryId }: { countryName: string; 
   }
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-4">
-          <Calendar className="w-6 h-6 text-[#FFA500]" />
-          <h1 className="text-2xl font-bold text-gray-900">{t('nav.schedule')}</h1>
+    <div className="space-y-4 sm:space-y-6">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div className="flex items-center gap-3 sm:gap-4">
+          <Calendar className="w-5 h-5 sm:w-6 sm:h-6 text-[#FFA500] flex-shrink-0" />
+          <h1 className="text-xl sm:text-2xl font-bold text-gray-900">{t('nav.schedule')}</h1>
         </div>
 
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
           {months.slice(0, displayCount).map((month) => (
             <button
               key={month}
               onClick={() => setSelectedMonth(month)}
-              className={`px-4 py-2 rounded-lg transition-colors ${
+              className={`px-3 sm:px-4 py-2 rounded-lg transition-colors text-sm sm:text-base ${
                 selectedMonth === month
                   ? 'bg-[#FFA500] text-white'
                   : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
@@ -288,15 +288,15 @@ export function SchedulePage({ countryName, countryId }: { countryName: string; 
         </div>
       </div>
 
-      <div className="bg-white rounded-lg border border-gray-200 p-4 mb-6">
+      <div className="bg-white rounded-lg border border-gray-200 p-3 sm:p-4 mb-4 sm:mb-6">
         <div className="relative">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
+          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 sm:w-5 sm:h-5 text-gray-400" />
           <input
             type="text"
             placeholder="Search by name..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0891b2] focus:border-transparent"
+            className="w-full pl-9 sm:pl-10 pr-4 py-2 sm:py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0891b2] focus:border-transparent text-base"
           />
         </div>
       </div>
@@ -323,10 +323,10 @@ export function SchedulePage({ countryName, countryId }: { countryName: string; 
             <>
               {filteredDealerData.length > 0 && (
                 <div>
-                  <h2 className="text-2xl font-bold text-gray-900 mb-4 border-b-2 border-[#0891b2] pb-2">
+                  <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-3 sm:mb-4 border-b-2 border-[#0891b2] pb-2">
                     Dealers
                   </h2>
-                  <div className="space-y-3">
+                  <div className="space-y-2 sm:space-y-3">
                     {filteredDealerData.map((person) => {
                       const key = `dealer-${person.name}`;
                       const isExpanded = expandedPeople.has(key);
@@ -334,28 +334,28 @@ export function SchedulePage({ countryName, countryId }: { countryName: string; 
                         <div key={key} className="border border-gray-200 rounded-lg overflow-hidden shadow-sm">
                           <button
                             onClick={() => togglePerson(key)}
-                            className="w-full bg-[#0891b2] text-white px-4 py-3 font-semibold flex items-center gap-3 hover:bg-[#0e7490] transition-colors cursor-pointer"
+                            className="w-full bg-[#0891b2] text-white px-3 sm:px-4 py-2.5 sm:py-3 font-semibold flex items-center gap-2 sm:gap-3 hover:bg-[#0e7490] transition-colors cursor-pointer text-sm sm:text-base"
                           >
                             {isExpanded ? (
-                              <ChevronDown className="w-5 h-5 flex-shrink-0" />
+                              <ChevronDown className="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0" />
                             ) : (
-                              <ChevronRight className="w-5 h-5 flex-shrink-0" />
+                              <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0" />
                             )}
-                            <span>{person.name}</span>
+                            <span className="truncate">{person.name}</span>
                           </button>
 
                           {isExpanded && (
-                            <div className="p-4 space-y-4 bg-gray-50">
+                            <div className="p-3 sm:p-4 space-y-3 sm:space-y-4 bg-gray-50">
                               {person.shift && (
                                 <div>
-                                  <h3 className="text-md font-semibold text-gray-700 mb-2">Shift Schedule</h3>
+                                  <h3 className="text-sm sm:text-md font-semibold text-gray-700 mb-2">Shift Schedule</h3>
                                   <ShiftCalendar data={person.shift} />
                                 </div>
                               )}
 
                               {person.wh && (
                                 <div>
-                                  <h3 className="text-md font-semibold text-gray-700 mb-2">Working Hours</h3>
+                                  <h3 className="text-sm sm:text-md font-semibold text-gray-700 mb-2">Working Hours</h3>
                                   <WHTable data={person.wh} />
                                 </div>
                               )}
@@ -370,10 +370,10 @@ export function SchedulePage({ countryName, countryId }: { countryName: string; 
 
               {filteredSMData.length > 0 && (
                 <div>
-                  <h2 className="text-2xl font-bold text-gray-900 mb-4 border-b-2 border-[#0891b2] pb-2">
+                  <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-3 sm:mb-4 border-b-2 border-[#0891b2] pb-2">
                     Shift Managers
                   </h2>
-                  <div className="space-y-3">
+                  <div className="space-y-2 sm:space-y-3">
                     {filteredSMData.map((person) => {
                       const key = `sm-${person.name}`;
                       const isExpanded = expandedPeople.has(key);
@@ -381,28 +381,28 @@ export function SchedulePage({ countryName, countryId }: { countryName: string; 
                         <div key={key} className="border border-gray-200 rounded-lg overflow-hidden shadow-sm">
                           <button
                             onClick={() => togglePerson(key)}
-                            className="w-full bg-[#0891b2] text-white px-4 py-3 font-semibold flex items-center gap-3 hover:bg-[#0e7490] transition-colors cursor-pointer"
+                            className="w-full bg-[#0891b2] text-white px-3 sm:px-4 py-2.5 sm:py-3 font-semibold flex items-center gap-2 sm:gap-3 hover:bg-[#0e7490] transition-colors cursor-pointer text-sm sm:text-base"
                           >
                             {isExpanded ? (
-                              <ChevronDown className="w-5 h-5 flex-shrink-0" />
+                              <ChevronDown className="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0" />
                             ) : (
-                              <ChevronRight className="w-5 h-5 flex-shrink-0" />
+                              <ChevronRight className="w-4 h-4 sm:w-5 sm:h-5 flex-shrink-0" />
                             )}
-                            <span>{person.name}</span>
+                            <span className="truncate">{person.name}</span>
                           </button>
 
                           {isExpanded && (
-                            <div className="p-4 space-y-4 bg-gray-50">
+                            <div className="p-3 sm:p-4 space-y-3 sm:space-y-4 bg-gray-50">
                               {person.shift && (
                                 <div>
-                                  <h3 className="text-md font-semibold text-gray-700 mb-2">Shift Schedule</h3>
+                                  <h3 className="text-sm sm:text-md font-semibold text-gray-700 mb-2">Shift Schedule</h3>
                                   <ShiftCalendar data={person.shift} />
                                 </div>
                               )}
 
                               {person.wh && (
                                 <div>
-                                  <h3 className="text-md font-semibold text-gray-700 mb-2">Working Hours</h3>
+                                  <h3 className="text-sm sm:text-md font-semibold text-gray-700 mb-2">Working Hours</h3>
                                   <WHTable data={person.wh} />
                                 </div>
                               )}

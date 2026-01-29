@@ -3,7 +3,7 @@ import { Layout } from '../components/Layout';
 import { useTranslation } from '../hooks/useTranslation';
 import { useAuth } from '../contexts/useAuth';
 import { loadCountries, type Country } from '../lib/configService';
-import { Calendar, BarChart, BookOpen, Newspaper, Clock, RefreshCw } from 'lucide-react';
+import { Calendar, BarChart, BookOpen, Newspaper, Clock, RefreshCw, Menu, X } from 'lucide-react';
 import { SchedulePage } from './SchedulePage';
 import { DailyMistakesPage } from './DailyMistakesPage';
 import { MistakeStatisticsPage } from './MistakeStatisticsPage';
@@ -15,6 +15,7 @@ export function UserPage() {
   const { user } = useAuth();
   const [activeSection, setActiveSection] = useState<string>('schedule');
   const [country, setCountry] = useState<Country | null>(null);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   useEffect(() => {
     loadCountry();
@@ -58,6 +59,11 @@ export function UserPage() {
 
   const sections = getSections();
 
+  const handleSectionChange = (sectionId: string) => {
+    setActiveSection(sectionId);
+    setSidebarOpen(false);
+  };
+
   const renderContent = () => {
     if (!country) {
       return (
@@ -94,30 +100,49 @@ export function UserPage() {
 
   return (
     <Layout>
-      <div className="flex h-[calc(100vh-73px)]">
-        <aside className="w-64 bg-white border-r border-gray-200 p-6">
+      <div className="flex h-[calc(100vh-73px)] relative">
+        <button
+          onClick={() => setSidebarOpen(!sidebarOpen)}
+          className="lg:hidden fixed bottom-4 right-4 z-50 bg-[#FFA500] text-white p-3 rounded-full shadow-lg hover:bg-[#FF8C00] transition-colors"
+        >
+          {sidebarOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+        </button>
+
+        {sidebarOpen && (
+          <div
+            className="lg:hidden fixed inset-0 bg-black/50 z-30"
+            onClick={() => setSidebarOpen(false)}
+          />
+        )}
+
+        <aside className={`
+          fixed lg:relative inset-y-0 left-0 z-40 w-64 bg-white border-r border-gray-200 p-4 lg:p-6
+          transform transition-transform duration-200 ease-in-out
+          ${sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
+          overflow-y-auto
+        `}>
           <nav className="space-y-1">
             {sections.map((section) => {
               const Icon = section.icon;
               return (
                 <button
                   key={section.id}
-                  onClick={() => setActiveSection(section.id)}
-                  className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-14 font-medium transition-colors ${
+                  onClick={() => handleSectionChange(section.id)}
+                  className={`w-full flex items-center gap-3 px-3 lg:px-4 py-2.5 lg:py-3 rounded-lg text-13 lg:text-14 font-medium transition-colors ${
                     activeSection === section.id
                       ? 'bg-amber-50 text-amber'
                       : 'text-gray-700 hover:bg-gray-100'
                   }`}
                 >
                   <Icon className="w-5 h-5 flex-shrink-0" />
-                  <span className="text-left">{section.label}</span>
+                  <span className="text-left truncate">{section.label}</span>
                 </button>
               );
             })}
           </nav>
         </aside>
 
-        <main className="flex-1 overflow-auto p-8">
+        <main className="flex-1 overflow-auto p-4 lg:p-8">
           <div className="max-w-6xl">
             {renderContent()}
           </div>
