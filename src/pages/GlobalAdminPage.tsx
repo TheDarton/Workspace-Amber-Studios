@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { Layout } from '../components/Layout';
 import { useTranslation } from '../hooks/useTranslation';
 import { type Country } from '../lib/configService';
-import { Plus, Settings, Globe, Users, Trash2, Edit2, Calendar, BarChart, BookOpen, Newspaper, Clock, RefreshCw, Share2, Smartphone } from 'lucide-react';
+import { Plus, Settings, Globe, Users, Trash2, Edit2, Calendar, BarChart, BookOpen, Newspaper, Clock, RefreshCw, Share2, Smartphone, Menu, X } from 'lucide-react';
 import { SchedulePage } from './SchedulePage';
 import { DailyMistakesPage } from './DailyMistakesPage';
 import { MistakeStatisticsPage } from './MistakeStatisticsPage';
@@ -30,6 +30,7 @@ export function GlobalAdminPage() {
   const [admins, setAdmins] = useState<Admin[]>([]);
   const [selectedCountry, setSelectedCountry] = useState<string>('');
   const [activeSection, setActiveSection] = useState<string>('users');
+  const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const [countryName, setCountryName] = useState('');
   const [countryPrefix, setCountryPrefix] = useState('');
@@ -340,16 +341,50 @@ export function GlobalAdminPage() {
     }
   };
 
+  const handleSectionChange = (sectionId: string) => {
+    setActiveSection(sectionId);
+    setSidebarOpen(false);
+  };
+
+  const handleTabChange = (tab: 'add-country' | 'add-admin' | 'settings') => {
+    setActiveTab(tab);
+    setSidebarOpen(false);
+  };
+
+  const handleCountrySelection = (countryId: string) => {
+    setSelectedCountry(countryId);
+    setSidebarOpen(false);
+  };
+
   return (
     <Layout>
-      <div className="flex h-[calc(100vh-73px)]">
-        <aside className="w-64 bg-white border-r border-gray-200 p-6">
+      <div className="flex h-[calc(100vh-73px)] relative">
+        <button
+          onClick={() => setSidebarOpen(!sidebarOpen)}
+          className="lg:hidden fixed bottom-4 right-4 z-50 bg-[#FFA500] text-white p-3 rounded-full shadow-lg hover:bg-[#FF8C00] transition-colors"
+        >
+          {sidebarOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+        </button>
+
+        {sidebarOpen && (
+          <div
+            className="lg:hidden fixed inset-0 bg-black/50 z-30"
+            onClick={() => setSidebarOpen(false)}
+          />
+        )}
+
+        <aside className={`
+          fixed lg:relative inset-y-0 left-0 z-40 w-64 bg-white border-r border-gray-200 p-4 lg:p-6
+          transform transition-transform duration-200 ease-in-out
+          ${sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
+          overflow-y-auto
+        `}>
           {selectedCountry ? (
             <>
-              <div className="mb-6">
-                <div className="p-4 bg-amber-50 rounded-lg mb-4">
-                  <div className="text-12 font-semibold text-gray-700 mb-1">{t('common.viewingAsAdmin')}</div>
-                  <div className="text-16 font-bold text-amber">
+              <div className="mb-4 lg:mb-6">
+                <div className="p-3 lg:p-4 bg-amber-50 rounded-lg mb-4">
+                  <div className="text-11 lg:text-12 font-semibold text-gray-700 mb-1">{t('common.viewingAsAdmin')}</div>
+                  <div className="text-14 lg:text-16 font-bold text-amber">
                     {countries.find(c => c.id === selectedCountry)?.name}
                   </div>
                 </div>
@@ -357,8 +392,9 @@ export function GlobalAdminPage() {
                   onClick={() => {
                     setSelectedCountry('');
                     setActiveSection('users');
+                    setSidebarOpen(false);
                   }}
-                  className="w-full px-4 py-2 text-14 text-amber hover:bg-amber-50 rounded-lg transition-colors"
+                  className="w-full px-4 py-2 text-13 lg:text-14 text-amber hover:bg-amber-50 rounded-lg transition-colors"
                 >
                   {t('common.backToGlobalAdmin')}
                 </button>
@@ -369,15 +405,15 @@ export function GlobalAdminPage() {
                   return (
                     <button
                       key={section.id}
-                      onClick={() => setActiveSection(section.id)}
-                      className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-14 font-medium transition-colors ${
+                      onClick={() => handleSectionChange(section.id)}
+                      className={`w-full flex items-center gap-3 px-3 lg:px-4 py-2.5 lg:py-3 rounded-lg text-13 lg:text-14 font-medium transition-colors ${
                         activeSection === section.id
                           ? 'bg-amber-50 text-amber'
                           : 'text-gray-700 hover:bg-gray-100'
                       }`}
                     >
                       <Icon className="w-5 h-5 flex-shrink-0" />
-                      <span className="text-left">{section.label}</span>
+                      <span className="text-left truncate">{section.label}</span>
                     </button>
                   );
                 })}
@@ -387,51 +423,51 @@ export function GlobalAdminPage() {
             <>
               <nav className="space-y-2">
                 <button
-                  onClick={() => setActiveTab('add-country')}
-                  className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-14 font-medium transition-colors ${
+                  onClick={() => handleTabChange('add-country')}
+                  className={`w-full flex items-center gap-3 px-3 lg:px-4 py-2.5 lg:py-3 rounded-lg text-13 lg:text-14 font-medium transition-colors ${
                     activeTab === 'add-country'
                       ? 'bg-amber-50 text-amber'
                       : 'text-gray-700 hover:bg-gray-100'
                   }`}
                 >
                   <Globe className="w-5 h-5 flex-shrink-0" />
-                  <span className="text-left">{t('nav.addCountry')}</span>
+                  <span className="text-left truncate">{t('nav.addCountry')}</span>
                 </button>
 
                 <button
-                  onClick={() => setActiveTab('add-admin')}
-                  className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-14 font-medium transition-colors ${
+                  onClick={() => handleTabChange('add-admin')}
+                  className={`w-full flex items-center gap-3 px-3 lg:px-4 py-2.5 lg:py-3 rounded-lg text-13 lg:text-14 font-medium transition-colors ${
                     activeTab === 'add-admin'
                       ? 'bg-amber-50 text-amber'
                       : 'text-gray-700 hover:bg-gray-100'
                   }`}
                 >
                   <Users className="w-5 h-5 flex-shrink-0" />
-                  <span className="text-left">{t('nav.addAdmin')}</span>
+                  <span className="text-left truncate">{t('nav.addAdmin')}</span>
                 </button>
 
                 <button
-                  onClick={() => setActiveTab('settings')}
-                  className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg text-14 font-medium transition-colors ${
+                  onClick={() => handleTabChange('settings')}
+                  className={`w-full flex items-center gap-3 px-3 lg:px-4 py-2.5 lg:py-3 rounded-lg text-13 lg:text-14 font-medium transition-colors ${
                     activeTab === 'settings'
                       ? 'bg-amber-50 text-amber'
                       : 'text-gray-700 hover:bg-gray-100'
                   }`}
                 >
                   <Settings className="w-5 h-5 flex-shrink-0" />
-                  <span className="text-left">{t('nav.settings')}</span>
+                  <span className="text-left truncate">{t('nav.settings')}</span>
                 </button>
               </nav>
 
               {countries.length > 0 && (
-                <div className="mt-8">
-                  <label className="block text-12 font-semibold text-gray-700 mb-2 uppercase">
+                <div className="mt-6 lg:mt-8">
+                  <label className="block text-11 lg:text-12 font-semibold text-gray-700 mb-2 uppercase">
                     {t('nav.selectCountry')}
                   </label>
                   <select
                     value={selectedCountry}
-                    onChange={(e) => setSelectedCountry(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-14 focus:outline-none focus:ring-2 focus:ring-amber"
+                    onChange={(e) => handleCountrySelection(e.target.value)}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-13 lg:text-14 focus:outline-none focus:ring-2 focus:ring-amber"
                   >
                     <option value="">{t('common.select')}</option>
                     {countries.map((country) => (
@@ -446,7 +482,7 @@ export function GlobalAdminPage() {
           )}
         </aside>
 
-        <main className="flex-1 overflow-auto p-8">
+        <main className="flex-1 overflow-auto p-4 lg:p-8">
           {message && (
             <div
               className={`mb-6 p-4 rounded-lg ${
@@ -460,16 +496,16 @@ export function GlobalAdminPage() {
           )}
 
           {selectedCountry ? (
-            <div className="max-w-6xl">
+            <div className="w-full max-w-6xl">
               {renderCountryAdminContent()}
             </div>
           ) : (
             <>
               {activeTab === 'add-country' && (
                 <div>
-              <h1 className="text-24 font-bold text-gray-900 mb-6">{t('countries.addCountry')}</h1>
+              <h1 className="text-xl sm:text-2xl font-bold text-gray-900 mb-4 sm:mb-6">{t('countries.addCountry')}</h1>
 
-              <div className="bg-white rounded-lg border border-gray-200 p-6 max-w-2xl">
+              <div className="bg-white rounded-lg border border-gray-200 p-4 sm:p-6 max-w-2xl">
                 <form onSubmit={handleAddCountry} className="space-y-6">
                   <div>
                     <label className="block text-14 font-medium text-gray-700 mb-2">
@@ -508,10 +544,10 @@ export function GlobalAdminPage() {
               </div>
 
               {countries.length > 0 && (
-                <div className="mt-8">
-                  <h2 className="text-20 font-bold text-gray-900 mb-4">{t('countries.countriesList')}</h2>
-                  <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
-                    <table className="w-full">
+                <div className="mt-6 sm:mt-8">
+                  <h2 className="text-lg sm:text-xl font-bold text-gray-900 mb-4">{t('countries.countriesList')}</h2>
+                  <div className="bg-white rounded-lg border border-gray-200 overflow-x-auto">
+                    <table className="w-full min-w-[500px]">
                       <thead className="bg-gray-50">
                         <tr>
                           <th className="px-6 py-3 text-left text-12 font-semibold text-gray-700 uppercase">{t('common.name')}</th>
@@ -544,11 +580,11 @@ export function GlobalAdminPage() {
 
               {activeTab === 'add-admin' && (
                 <div>
-              <h1 className="text-24 font-bold text-gray-900 mb-6">
+              <h1 className="text-xl sm:text-2xl font-bold text-gray-900 mb-4 sm:mb-6">
                 {editingAdmin ? t('admins.editAdministrator') : t('admins.addAdministrator')}
               </h1>
 
-              <div className="bg-white rounded-lg border border-gray-200 p-6 max-w-2xl">
+              <div className="bg-white rounded-lg border border-gray-200 p-4 sm:p-6 max-w-2xl">
                 <form onSubmit={editingAdmin ? handleUpdateAdmin : handleAddAdmin} className="space-y-6">
                   <div>
                     <label className="block text-14 font-medium text-gray-700 mb-2">
@@ -653,10 +689,10 @@ export function GlobalAdminPage() {
               </div>
 
               {admins.length > 0 && (
-                <div className="mt-8">
-                  <h2 className="text-20 font-bold text-gray-900 mb-4">{t('admins.adminList')}</h2>
-                  <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
-                    <table className="w-full">
+                <div className="mt-6 sm:mt-8">
+                  <h2 className="text-lg sm:text-xl font-bold text-gray-900 mb-4">{t('admins.adminList')}</h2>
+                  <div className="bg-white rounded-lg border border-gray-200 overflow-x-auto">
+                    <table className="w-full min-w-[600px]">
                       <thead className="bg-gray-50">
                         <tr>
                           <th className="px-6 py-3 text-left text-12 font-semibold text-gray-700 uppercase">{t('admins.tableHeaderLogin')}</th>
@@ -701,9 +737,9 @@ export function GlobalAdminPage() {
 
               {activeTab === 'settings' && (
                 <div>
-              <h1 className="text-24 font-bold text-gray-900 mb-6">{t('settings.title')}</h1>
+              <h1 className="text-xl sm:text-2xl font-bold text-gray-900 mb-4 sm:mb-6">{t('settings.title')}</h1>
 
-              <div className="bg-white rounded-lg border border-gray-200 p-6 max-w-2xl mb-6">
+              <div className="bg-white rounded-lg border border-gray-200 p-4 sm:p-6 max-w-2xl mb-6">
                 <h2 className="text-18 font-bold text-gray-900 mb-4">{t('settings.profileInformation')}</h2>
                 <form onSubmit={handleUpdateProfile} className="space-y-4">
                   <div>
@@ -751,8 +787,8 @@ export function GlobalAdminPage() {
                 </form>
               </div>
 
-              <div className="bg-white rounded-lg border border-gray-200 p-6 max-w-2xl">
-                <h2 className="text-18 font-bold text-gray-900 mb-4">{t('settings.changePassword')}</h2>
+              <div className="bg-white rounded-lg border border-gray-200 p-4 sm:p-6 max-w-2xl">
+                <h2 className="text-base sm:text-lg font-bold text-gray-900 mb-4">{t('settings.changePassword')}</h2>
                 <form onSubmit={handleChangePasswordSettings} className="space-y-4">
                   <div>
                     <label className="block text-14 font-medium text-gray-700 mb-2">

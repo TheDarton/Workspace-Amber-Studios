@@ -116,22 +116,35 @@ export default function WHTable({ data, userName }: WHTableProps) {
   const headerPaddingRight = hasVerticalScroll ? scrollbarWidth : 0;
   const leftColumnPaddingBottom = hasHorizontalScroll ? scrollbarWidth : 0;
 
-  return (
-    <div className="border border-gray-200 rounded-lg overflow-hidden shadow-sm">
-      <div className="bg-[#0891b2] text-white px-4 py-2 font-semibold">
-        Working Hours - {data.month} {data.year}
-      </div>
+  const leftColumnWidth = 240;
+  const nameCellWidth = 150;
+  const dayNightCellWidth = 45;
+  const totalCellWidth = 45;
 
-      <div style={{ display: 'grid', gridTemplateColumns: '340px 1fr', gridTemplateRows: 'auto 1fr' }}>
+  return (
+    <div className="space-y-2">
+      <div className="lg:hidden text-xs text-gray-500 flex items-center gap-2 px-2">
+        <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4" />
+        </svg>
+        <span>Scroll horizontally to see all days</span>
+      </div>
+      <div className="border border-gray-200 rounded-lg overflow-hidden shadow-sm">
+        <div className="bg-[#0891b2] text-white px-3 sm:px-4 py-2 text-sm sm:text-base font-semibold">
+          Working Hours - {data.month} {data.year}
+        </div>
+
+      <div style={{ display: 'grid', gridTemplateColumns: `${leftColumnWidth}px 1fr`, gridTemplateRows: 'auto 1fr' }}>
         <div className="bg-blue-100 border-l border-t border-gray-300">
           <div className="flex border-b border-r border-gray-300" style={{ height: '80px' }}>
-            <div className="px-3 py-2 text-sm font-medium text-gray-700 flex items-center justify-center bg-blue-100" style={{ width: '200px' }}>
+            <div className="px-2 py-2 text-xs sm:text-sm font-medium text-gray-700 flex items-center justify-center bg-blue-100" style={{ width: `${nameCellWidth}px` }}>
               Name Surname
             </div>
-            <div className="px-3 py-2 text-sm font-medium text-gray-700 flex items-center justify-center border-l border-gray-300 bg-blue-100" style={{ width: '70px' }}>
-              Day/Night
+            <div className="px-1 py-2 text-xs sm:text-sm font-medium text-gray-700 flex items-center justify-center border-l border-gray-300 bg-blue-100" style={{ width: `${dayNightCellWidth}px` }}>
+              <span className="hidden sm:inline">Day/Night</span>
+              <span className="sm:hidden">D/N</span>
             </div>
-            <div className="px-3 py-2 text-sm font-medium text-gray-700 flex items-center justify-center border-l border-gray-300 bg-blue-100" style={{ width: '70px', borderRight: '2px solid #6b7280' }}>
+            <div className="px-1 py-2 text-xs sm:text-sm font-medium text-gray-700 flex items-center justify-center border-l border-gray-300 bg-blue-100" style={{ width: `${totalCellWidth}px`, borderRight: '2px solid #6b7280' }}>
               Total
             </div>
           </div>
@@ -140,8 +153,12 @@ export default function WHTable({ data, userName }: WHTableProps) {
         <div className="flex border-t border-gray-300 overflow-hidden">
           <div
             ref={topRightRef}
-            className="overflow-x-scroll overflow-y-hidden bg-gray-100 flex-1 scrollbar-hide"
+            className="overflow-x-auto overflow-y-hidden bg-gray-100 flex-1"
             onScroll={handleTopRightScroll}
+            style={{
+              scrollbarWidth: 'thin',
+              scrollbarColor: '#0891b2 #f3f4f6'
+            }}
           >
             <div style={{ width: `${dataContentWidth}px` }}>
               <div className="flex border-b border-gray-300" style={{ height: '80px' }}>
@@ -168,28 +185,34 @@ export default function WHTable({ data, userName }: WHTableProps) {
         <div className="flex flex-col border-l border-gray-300" style={{ maxHeight: '400px' }}>
           <div
             ref={bottomLeftRef}
-            className="overflow-y-scroll overflow-x-hidden bg-blue-50 flex-1 scrollbar-hide"
+            className="overflow-y-auto overflow-x-hidden bg-blue-50 flex-1"
             onScroll={handleBottomLeftScroll}
+            style={{
+              scrollbarWidth: 'thin',
+              scrollbarColor: '#0891b2 #f3f4f6'
+            }}
           >
             {groupedRows.map((group, idx) => (
               <div key={idx} className="flex" style={{ borderBottom: '2px solid #6b7280' }}>
-                <div className="px-3 py-2 text-sm text-gray-900 border-r border-gray-300 bg-blue-50 whitespace-nowrap overflow-hidden text-ellipsis flex items-center" style={{ width: '200px', height: '72px' }}>
+                <div className="px-2 py-2 text-xs sm:text-sm text-gray-900 border-r border-gray-300 bg-blue-50 whitespace-nowrap overflow-hidden text-ellipsis flex items-center" style={{ width: `${nameCellWidth}px`, height: '72px' }}>
                   {group.name}
                 </div>
                 <div className="flex flex-col">
                   <div className="flex">
-                    <div className="px-2 py-2 text-xs text-gray-600 border-b border-r border-gray-300 bg-amber-50 flex items-center justify-center" style={{ width: '70px', height: '36px' }}>
-                      Day
+                    <div className="px-1 py-2 text-xs text-gray-600 border-b border-r border-gray-300 bg-amber-50 flex items-center justify-center" style={{ width: `${dayNightCellWidth}px`, height: '36px' }}>
+                      <span className="hidden sm:inline">Day</span>
+                      <span className="sm:hidden">D</span>
                     </div>
-                    <div className="px-2 py-2 text-sm font-medium text-gray-900 border-b border-gray-300 bg-amber-50 flex items-center justify-center" style={{ width: '70px', height: '36px', borderRight: '2px solid #6b7280' }}>
+                    <div className="px-1 py-2 text-xs sm:text-sm font-medium text-gray-900 border-b border-gray-300 bg-amber-50 flex items-center justify-center" style={{ width: `${totalCellWidth}px`, height: '36px', borderRight: '2px solid #6b7280' }}>
                       {group.dayRow.totalHours}
                     </div>
                   </div>
                   <div className="flex">
-                    <div className="px-2 py-2 text-xs text-gray-600 border-r border-gray-300 bg-blue-100 flex items-center justify-center" style={{ width: '70px', height: '36px' }}>
-                      Night
+                    <div className="px-1 py-2 text-xs text-gray-600 border-r border-gray-300 bg-blue-100 flex items-center justify-center" style={{ width: `${dayNightCellWidth}px`, height: '36px' }}>
+                      <span className="hidden sm:inline">Night</span>
+                      <span className="sm:hidden">N</span>
                     </div>
-                    <div className="px-2 py-2 text-sm font-medium text-gray-900 border-gray-300 bg-blue-100 flex items-center justify-center" style={{ width: '70px', height: '36px', borderRight: '2px solid #6b7280' }}>
+                    <div className="px-1 py-2 text-xs sm:text-sm font-medium text-gray-900 border-gray-300 bg-blue-100 flex items-center justify-center" style={{ width: `${totalCellWidth}px`, height: '36px', borderRight: '2px solid #6b7280' }}>
                       {group.nightRow?.totalHours || '-'}
                     </div>
                   </div>
@@ -203,7 +226,11 @@ export default function WHTable({ data, userName }: WHTableProps) {
         <div
           ref={bottomRightRef}
           className="overflow-auto bg-white"
-          style={{ maxHeight: '400px' }}
+          style={{
+            maxHeight: '400px',
+            scrollbarWidth: 'thin',
+            scrollbarColor: '#0891b2 #f3f4f6'
+          }}
           onScroll={handleBottomRightScroll}
         >
           <div style={{ width: `${dataContentWidth}px` }}>
@@ -251,6 +278,7 @@ export default function WHTable({ data, userName }: WHTableProps) {
             ))}
           </div>
         </div>
+      </div>
       </div>
     </div>
   );
