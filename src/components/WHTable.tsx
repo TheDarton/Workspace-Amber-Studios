@@ -63,10 +63,10 @@ export default function WHTable({ data, userName }: WHTableProps) {
             <table className="w-full border-collapse">
               <thead>
                 <tr>
-                  <th className="px-2 py-2 text-xs sm:text-sm font-semibold bg-blue-100 border-b border-r border-gray-300 text-gray-700 w-20">
+                  <th className="px-2 py-2 text-xs sm:text-sm font-semibold bg-blue-100 border-b border-r border-gray-300 text-gray-700 w-20 sticky left-0 z-10">
                     Day Night
                   </th>
-                  <th className="px-2 py-2 text-xs sm:text-sm font-semibold bg-blue-100 border-b border-r border-gray-300 text-gray-700 w-16">
+                  <th className="px-2 py-2 text-xs sm:text-sm font-semibold bg-blue-100 border-b border-r border-gray-300 text-gray-700 w-16 sticky left-20 z-10">
                     Total
                   </th>
                   {validDays.map((day) => {
@@ -91,10 +91,10 @@ export default function WHTable({ data, userName }: WHTableProps) {
               </thead>
               <tbody>
                 <tr>
-                  <td className="px-2 py-2 text-xs sm:text-sm font-bold text-center bg-amber-50 border-b border-r border-gray-300 text-gray-700">
+                  <td className="px-2 py-2 text-xs sm:text-sm font-bold text-center bg-amber-50 border-b border-r border-gray-300 text-gray-700 sticky left-0 z-10">
                     Day
                   </td>
-                  <td className="px-2 py-2 text-xs sm:text-sm font-bold text-center bg-amber-50 border-b border-r border-gray-300 text-gray-900">
+                  <td className="px-2 py-2 text-xs sm:text-sm font-bold text-center bg-amber-50 border-b border-r border-gray-300 text-gray-900 sticky left-20 z-10">
                     {group.dayRow.totalHours}
                   </td>
                   {validDays.map((day) => {
@@ -116,10 +116,10 @@ export default function WHTable({ data, userName }: WHTableProps) {
                   })}
                 </tr>
                 <tr>
-                  <td className="px-2 py-2 text-xs sm:text-sm font-bold text-center bg-blue-100 border-r border-gray-300 text-gray-700">
+                  <td className="px-2 py-2 text-xs sm:text-sm font-bold text-center bg-blue-100 border-r border-gray-300 text-gray-700 sticky left-0 z-10">
                     Night
                   </td>
-                  <td className="px-2 py-2 text-xs sm:text-sm font-bold text-center bg-blue-100 border-r border-gray-300 text-gray-900">
+                  <td className="px-2 py-2 text-xs sm:text-sm font-bold text-center bg-blue-100 border-r border-gray-300 text-gray-900 sticky left-20 z-10">
                     {group.nightRow?.totalHours || '-'}
                   </td>
                   {validDays.map((day) => {

@@ -284,12 +284,15 @@ export function parseWHData(data: string[][]): WHData {
   const month = row1[2] || '';
   const year = row2[2] || '';
 
+  const totalHoursIdx = headers.findIndex(h => h && h.toLowerCase().includes('total'));
+  const holidayIdx = headers.findIndex(h => h && h.toLowerCase().includes('holiday'));
+
   const dates: Record<number, number> = {};
   const weekdays: Record<number, string> = {};
 
-  for (let i = 4; i < headers.length - 3; i++) {
+  for (let i = 4; i < headers.length; i++) {
     const dayNum = parseInt(headers[i]);
-    if (!isNaN(dayNum)) {
+    if (!isNaN(dayNum) && dayNum >= 1 && dayNum <= 31) {
       dates[dayNum] = parseInt(row1[i]) || dayNum;
       weekdays[dayNum] = row2[i] || '';
     }
@@ -312,16 +315,15 @@ export function parseWHData(data: string[][]): WHData {
       holiday: '',
     };
 
-    for (let j = 4; j < headers.length - 3; j++) {
+    for (let j = 4; j < headers.length; j++) {
       const dayNum = parseInt(headers[j]);
-      if (!isNaN(dayNum)) {
+      if (!isNaN(dayNum) && dayNum >= 1 && dayNum <= 31) {
         parsedRow.hours[dayNum] = row[j] || '';
       }
     }
 
-    const summaryStartIdx = headers.length - 3;
-    parsedRow.totalHours = row[summaryStartIdx] || '';
-    parsedRow.holiday = row[summaryStartIdx + 2] || '';
+    parsedRow.totalHours = totalHoursIdx >= 0 ? (row[totalHoursIdx] || '') : '';
+    parsedRow.holiday = holidayIdx >= 0 ? (row[holidayIdx] || '') : '';
 
     rows.push(parsedRow);
   }
