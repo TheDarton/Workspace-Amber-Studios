@@ -10,6 +10,7 @@ import { MistakeStatisticsPage } from './MistakeStatisticsPage';
 import { TrainingAcademyPage } from './TrainingAcademyPage';
 import { NewsPage } from './NewsPage';
 import { VisibleMonthsConfig } from '../components/VisibleMonthsConfig';
+import { UserManagement } from '../components/UserManagement';
 
 export function AdminPage() {
   const { t } = useTranslation();
@@ -65,6 +66,8 @@ export function AdminPage() {
     }
 
     switch (activeSection) {
+      case 'users':
+        return <UserManagement countryId={country.id} countryName={country.name} />;
       case 'csv-config':
         return <VisibleMonthsConfig countryId={country.id} countryName={country.name} />;
       case 'schedule':

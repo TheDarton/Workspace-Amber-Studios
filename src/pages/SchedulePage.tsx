@@ -215,21 +215,55 @@ export function SchedulePage({ countryName, countryId }: { countryName: string; 
     return Array.from(peopleMap.values());
   }, [smShiftData, smWHData]);
 
+  const isPersonalView = (user?.role === 'dealer' || user?.role === 'sm') && userFullName;
+
   const filteredDealerData = useMemo(() => {
-    if (!searchQuery.trim()) return dealerData;
-    const query = searchQuery.toLowerCase();
-    return dealerData.filter(person =>
-      person.name.toLowerCase().includes(query)
-    );
-  }, [dealerData, searchQuery]);
+    let data = dealerData;
+
+    if (user?.role === 'dealer' && userFullName) {
+      data = data.filter(person =>
+        person.name.toLowerCase() === userFullName.toLowerCase()
+      );
+    }
+
+    if (searchQuery.trim()) {
+      const query = searchQuery.toLowerCase();
+      data = data.filter(person =>
+        person.name.toLowerCase().includes(query)
+      );
+    }
+
+    return data;
+  }, [dealerData, searchQuery, user?.role, userFullName]);
 
   const filteredSMData = useMemo(() => {
-    if (!searchQuery.trim()) return smData;
-    const query = searchQuery.toLowerCase();
-    return smData.filter(person =>
-      person.name.toLowerCase().includes(query)
-    );
-  }, [smData, searchQuery]);
+    let data = smData;
+
+    if (user?.role === 'sm' && userFullName) {
+      data = data.filter(person =>
+        person.name.toLowerCase() === userFullName.toLowerCase()
+      );
+    }
+
+    if (searchQuery.trim()) {
+      const query = searchQuery.toLowerCase();
+      data = data.filter(person =>
+        person.name.toLowerCase().includes(query)
+      );
+    }
+
+    return data;
+  }, [smData, searchQuery, user?.role, userFullName]);
+
+  useEffect(() => {
+    if (isPersonalView && userFullName) {
+      if (user?.role === 'dealer') {
+        setExpandedPeople(new Set([`dealer-${userFullName}`]));
+      } else if (user?.role === 'sm') {
+        setExpandedPeople(new Set([`sm-${userFullName}`]));
+      }
+    }
+  }, [isPersonalView, userFullName, user?.role, filteredDealerData, filteredSMData]);
 
   if (loadingMonths) {
     return (
@@ -288,18 +322,20 @@ export function SchedulePage({ countryName, countryId }: { countryName: string; 
         </div>
       </div>
 
-      <div className="bg-white rounded-lg border border-gray-200 p-3 sm:p-4 mb-4 sm:mb-6">
-        <div className="relative">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 sm:w-5 sm:h-5 text-gray-400" />
-          <input
-            type="text"
-            placeholder="Search by name..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full pl-9 sm:pl-10 pr-4 py-2 sm:py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0891b2] focus:border-transparent text-base"
-          />
+      {!isPersonalView && (
+        <div className="bg-white rounded-lg border border-gray-200 p-3 sm:p-4 mb-4 sm:mb-6">
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 sm:w-5 sm:h-5 text-gray-400" />
+            <input
+              type="text"
+              placeholder="Search by name..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="w-full pl-9 sm:pl-10 pr-4 py-2 sm:py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0891b2] focus:border-transparent text-base"
+            />
+          </div>
         </div>
-      </div>
+      )}
 
       {loading ? (
         <div className="bg-white rounded-lg border border-gray-200 p-8 text-center">
