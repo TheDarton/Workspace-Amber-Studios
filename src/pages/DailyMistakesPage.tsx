@@ -97,7 +97,7 @@ function DailyTable({ statsData, filteredRows, selectedMonth, validDays, userRol
         <div style={{ display: 'grid', gridTemplateColumns: '380px 1fr', gridTemplateRows: 'auto 1fr', minWidth: '800px' }}>
         <div className="bg-blue-100 border-l border-t border-gray-300">
           <div className="border-b border-r border-gray-300">
-            <div className={`px-3 py-2 text-lg font-semibold text-gray-700 flex items-center justify-center ${(userRole === 'dealer' || userRole === 'sm') ? 'h-[40px]' : 'h-[80px]'}`}>
+            <div className={`px-3 py-2 text-lg font-semibold text-gray-700 flex items-center justify-center ${(userRole === 'dealer' || userRole === 'sm') ? 'h-[60px]' : 'h-[80px]'}`}>
               <span>{selectedMonth}</span>
             </div>
           </div>
@@ -123,7 +123,7 @@ function DailyTable({ statsData, filteredRows, selectedMonth, validDays, userRol
             onScroll={handleTopRightScroll}
           >
             <div style={{ width: `${dataContentWidth}px` }}>
-              <div className={`flex border-b border-gray-300 ${(userRole === 'dealer' || userRole === 'sm') ? 'h-[40px]' : 'h-[80px]'}`}>
+              <div className={`flex border-b border-gray-300 ${(userRole === 'dealer' || userRole === 'sm') ? 'h-[60px]' : 'h-[80px]'}`}>
                 {validDays.map((day, idx) => {
                   const weekday = statsData.weekdays[day];
                   const weekend = isWeekend(weekday);
@@ -134,9 +134,7 @@ function DailyTable({ statsData, filteredRows, selectedMonth, validDays, userRol
                       style={{ width: '60px' }}
                     >
                       <div className="text-lg font-semibold text-gray-800">{day}</div>
-                      {userRole !== 'dealer' && userRole !== 'sm' && (
-                        <div className={`text-xs ${weekend ? 'text-red-600 font-medium' : 'text-gray-500'}`}>{weekday}</div>
-                      )}
+                      <div className={`text-xs ${weekend ? 'text-red-600 font-medium' : 'text-gray-500'}`}>{weekday}</div>
                     </div>
                   );
                 })}
