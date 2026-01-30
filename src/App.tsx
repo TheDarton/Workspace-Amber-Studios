@@ -3,6 +3,7 @@ import { useAuth } from './contexts/useAuth';
 import { LoginPage } from './pages/LoginPage';
 import { GlobalAdminPage } from './pages/GlobalAdminPage';
 import { AdminPage } from './pages/AdminPage';
+import { OperationPage } from './pages/OperationPage';
 import { UserPage } from './pages/UserPage';
 
 function AppContent() {
@@ -29,6 +30,10 @@ function AppContent() {
 
   if (user.role === 'admin') {
     return <AdminPage />;
+  }
+
+  if (user.role === 'operation') {
+    return <OperationPage />;
   }
 
   return <UserPage />;
