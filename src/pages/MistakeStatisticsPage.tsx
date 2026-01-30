@@ -43,6 +43,13 @@ function CategoryTable({ category, statsData, filteredRows, selectedMonth }: Cat
   const [hasVerticalScroll, setHasVerticalScroll] = useState(false);
   const [hasHorizontalScroll, setHasHorizontalScroll] = useState(false);
 
+  const calculateCategoryTotal = (mistakes: Record<string, string>, codes: string[]): number => {
+    return codes.reduce((sum, code) => {
+      const value = parseInt(mistakes[code] || '0');
+      return sum + (isNaN(value) ? 0 : value);
+    }, 0);
+  };
+
   useEffect(() => {
     const checkScrollbars = () => {
       if (bottomRightRef.current) {
@@ -110,6 +117,20 @@ function CategoryTable({ category, statsData, filteredRows, selectedMonth }: Cat
               Total
             </div>
           </div>
+          <div className="flex">
+            <div className="px-3 py-2 text-sm text-gray-900 border-b border-r border-gray-300 bg-blue-100 whitespace-nowrap overflow-hidden text-ellipsis" style={{ width: '200px' }}>
+              {statsData.totalRow.nameSurname}
+            </div>
+            <div className="px-3 py-2 text-sm text-gray-700 border-b border-r border-gray-300 bg-blue-100" style={{ width: '100px' }}>
+              {statsData.totalRow.nickname}
+            </div>
+            <div className="px-3 py-2 text-center text-sm font-semibold text-gray-900 border-b border-r border-gray-300 bg-blue-100" style={{ width: '80px' }}>
+              {(() => {
+                const total = calculateCategoryTotal(statsData.totalRow.mistakes, category.codes);
+                return total === 0 ? '-' : total;
+              })()}
+            </div>
+          </div>
         </div>
 
         <div className="flex border-t border-gray-300 overflow-hidden">
@@ -156,19 +177,22 @@ function CategoryTable({ category, statsData, filteredRows, selectedMonth }: Cat
             className="overflow-y-scroll overflow-x-hidden bg-blue-50 flex-1 scrollbar-hide"
             onScroll={handleBottomLeftScroll}
           >
-            {filteredRows.map((row, idx) => (
-              <div key={idx} className="flex">
-                <div className="px-3 py-2 text-sm text-gray-900 border-b border-r border-gray-300 bg-blue-50 whitespace-nowrap overflow-hidden text-ellipsis" style={{ width: '200px' }}>
-                  {row.nameSurname}
+            {filteredRows.map((row, idx) => {
+              const categoryTotal = calculateCategoryTotal(row.mistakes, category.codes);
+              return (
+                <div key={idx} className="flex">
+                  <div className="px-3 py-2 text-sm text-gray-900 border-b border-r border-gray-300 bg-blue-50 whitespace-nowrap overflow-hidden text-ellipsis" style={{ width: '200px' }}>
+                    {row.nameSurname}
+                  </div>
+                  <div className="px-3 py-2 text-sm text-gray-700 border-b border-r border-gray-300 bg-blue-50" style={{ width: '100px' }}>
+                    {row.nickname}
+                  </div>
+                  <div className="px-3 py-2 text-center text-sm font-medium text-gray-900 border-b border-r border-gray-300 bg-blue-50" style={{ width: '80px' }}>
+                    {categoryTotal === 0 ? '-' : categoryTotal}
+                  </div>
                 </div>
-                <div className="px-3 py-2 text-sm text-gray-700 border-b border-r border-gray-300 bg-blue-50" style={{ width: '100px' }}>
-                  {row.nickname}
-                </div>
-                <div className="px-3 py-2 text-center text-sm font-medium text-gray-900 border-b border-r border-gray-300 bg-blue-50" style={{ width: '80px' }}>
-                  {row.total === '0' || row.total === 0 ? '-' : row.total}
-                </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
           <div className="bg-blue-50 border-r border-gray-300" style={{ height: `${leftColumnPaddingBottom}px`, flexShrink: 0 }}></div>
         </div>
