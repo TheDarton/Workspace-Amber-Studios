@@ -39,7 +39,7 @@ export function UserPage() {
       { id: 'daily-mistakes', label: t('nav.dailyMistakes'), icon: BarChart },
     ];
 
-    if (user?.role === 'operation') {
+    if (user?.role === 'dealer' || user?.role === 'sm' || user?.role === 'operation') {
       baseSections.push({ id: 'mistake-stats', label: t('nav.mistakeStatistics'), icon: BarChart });
     }
 
