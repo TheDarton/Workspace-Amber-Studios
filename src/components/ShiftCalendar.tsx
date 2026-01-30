@@ -117,7 +117,7 @@ export default function ShiftCalendar({ data, userName }: ShiftCalendarProps) {
                             {day}
                           </span>
                           {isCurrentMonth && shift && shift !== '0' && (
-                            <span className="absolute bottom-0.5 sm:bottom-auto sm:top-1/2 sm:-translate-y-1/2 left-1/2 -translate-x-1/2 text-[11px] sm:text-2xl lg:text-3xl font-bold text-gray-800 leading-none">
+                            <span className="absolute bottom-0.5 sm:bottom-auto sm:top-1/2 sm:-translate-y-1/2 left-1/2 -translate-x-1/2 text-sm sm:text-2xl lg:text-3xl font-bold text-gray-800 leading-none">
                               {shift}
                             </span>
                           )}
