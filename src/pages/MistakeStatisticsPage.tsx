@@ -113,17 +113,6 @@ function CategoryTable({ category, statsData, filteredRows, selectedMonth }: Cat
             <div className="px-3 py-2 text-left text-sm font-medium text-gray-700 border-b border-r border-gray-300 bg-blue-100" style={{ width: '100px' }}>
               Nickname
             </div>
-            <div className="px-3 py-2 text-center text-sm font-medium text-gray-700 border-b border-r border-gray-300 bg-blue-100" style={{ width: '80px' }}>
-              Total
-            </div>
-          </div>
-          <div className="flex">
-            <div className="px-3 py-2 text-sm text-gray-900 border-b border-r border-gray-300 bg-blue-100 whitespace-nowrap overflow-hidden text-ellipsis" style={{ width: '200px' }}>
-              {statsData.totalRow.nameSurname}
-            </div>
-            <div className="px-3 py-2 text-sm text-gray-700 border-b border-r border-gray-300 bg-blue-100" style={{ width: '100px' }}>
-              {statsData.totalRow.nickname}
-            </div>
             <div className="px-3 py-2 text-center text-sm font-semibold text-gray-900 border-b border-r border-gray-300 bg-blue-100" style={{ width: '80px' }}>
               {(() => {
                 const total = calculateCategoryTotal(statsData.totalRow.mistakes, category.codes);
