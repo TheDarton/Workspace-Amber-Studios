@@ -103,11 +103,11 @@ function CategoryTable({ category, statsData, filteredRows, selectedMonth, userR
         <div style={{ display: 'grid', gridTemplateColumns: '380px 1fr', gridTemplateRows: 'auto 1fr', minWidth: '800px' }}>
         <div className="bg-blue-100 border-l border-t border-gray-300">
           <div className="border-b border-r border-gray-300">
-            <div className={`px-3 py-2 text-lg font-semibold text-gray-700 flex items-center justify-center ${userRole === 'dealer' ? 'h-[176px]' : 'h-[216px]'}`}>
+            <div className={`px-3 py-2 text-lg font-semibold text-gray-700 flex items-center justify-center ${(userRole === 'dealer' || userRole === 'sm') ? 'h-[176px]' : 'h-[216px]'}`}>
               <span>{selectedMonth}</span>
             </div>
           </div>
-          {userRole !== 'dealer' && (
+          {userRole !== 'dealer' && userRole !== 'sm' && (
             <div className="flex">
               <div className="px-3 py-2 text-left text-sm font-medium text-gray-700 border-b border-r border-gray-300 bg-blue-100 whitespace-nowrap" style={{ width: '200px' }}>
                 Name Surname
@@ -132,7 +132,7 @@ function CategoryTable({ category, statsData, filteredRows, selectedMonth, userR
             onScroll={handleTopRightScroll}
           >
             <div style={{ width: `${dataContentWidth}px` }}>
-              <div className={`flex border-b border-gray-300 ${userRole === 'dealer' ? 'h-[176px]' : 'h-[216px]'}`}>
+              <div className={`flex border-b border-gray-300 ${(userRole === 'dealer' || userRole === 'sm') ? 'h-[176px]' : 'h-[216px]'}`}>
                 {category.codes.map((code, idx) => (
                   <div key={code} className={`px-3 py-2 text-sm font-medium text-gray-700 border-r border-gray-300 align-bottom bg-gray-100 flex items-end justify-center flex-shrink-0 ${idx === 0 ? 'border-l' : ''}`} style={{ width: '120px' }}>
                     <div
@@ -148,7 +148,7 @@ function CategoryTable({ category, statsData, filteredRows, selectedMonth, userR
                   </div>
                 ))}
               </div>
-              {userRole !== 'dealer' && (
+              {userRole !== 'dealer' && userRole !== 'sm' && (
                 <div className="flex">
                   {category.codes.map((code, idx) => {
                     const value = statsData.totalRow.mistakes[code] || '0';
