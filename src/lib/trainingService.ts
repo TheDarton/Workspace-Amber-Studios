@@ -102,15 +102,37 @@ export async function deleteTrainingMaterial(materialId: string): Promise<void> 
 
 export function parseOneDriveUrl(url: string): string | null {
   try {
-    if (!url.includes('onedrive.live.com') && !url.includes('1drv.ms')) {
+    // Support personal OneDrive, short links, and corporate/Azure OneDrive (SharePoint)
+    const isOneDrive = url.includes('onedrive.live.com') ||
+                       url.includes('1drv.ms') ||
+                       url.includes('sharepoint.com') ||
+                       url.includes('-my.sharepoint.com');
+
+    if (!isOneDrive) {
       return null;
     }
 
-    if (url.includes('embed?')) {
+    // If already an embed URL, return as is
+    if (url.includes('embed?') || url.includes('embed.aspx')) {
       return url;
     }
 
-    const embedUrl = url.replace('/view.aspx?', '/embed?');
+    // Convert view URL to embed URL for various formats
+    let embedUrl = url
+      .replace('/view.aspx?', '/embed?')
+      .replace('?web=1', '')
+      .replace('/view?', '/embed?');
+
+    // For SharePoint URLs, ensure proper embed format
+    if (url.includes('sharepoint.com')) {
+      // If it has resid parameter, it's likely already embeddable
+      if (url.includes('resid=') || url.includes('embed')) {
+        return embedUrl;
+      }
+      // Convert standard SharePoint share link to embed
+      embedUrl = embedUrl.replace('/:v:/', '/:e:/');
+    }
+
     return embedUrl;
   } catch {
     return null;

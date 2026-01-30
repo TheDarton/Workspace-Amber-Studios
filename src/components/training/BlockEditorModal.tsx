@@ -55,7 +55,7 @@ export function BlockEditorModal({
 
       const embedUrl = parseOneDriveUrl(videoUrl);
       if (!embedUrl) {
-        setError('Invalid OneDrive URL. Please use a valid OneDrive share link.');
+        setError('Invalid URL. Please use a valid OneDrive or Azure/SharePoint share link.');
         return;
       }
     }
@@ -151,11 +151,11 @@ export function BlockEditorModal({
                 type="url"
                 value={videoUrl}
                 onChange={(e) => setVideoUrl(e.target.value)}
-                placeholder="https://onedrive.live.com/..."
+                placeholder="https://onedrive.live.com/... or Azure/SharePoint link"
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#FFA500]"
               />
               <p className="text-12 text-gray-500 mt-1">
-                Paste a OneDrive share link for your video
+                Paste a OneDrive or Azure/SharePoint share link for your video
               </p>
 
               {videoUrl && embedUrl && (
@@ -176,7 +176,7 @@ export function BlockEditorModal({
               {videoUrl && !embedUrl && (
                 <div className="mt-3 flex items-center gap-2 p-3 bg-yellow-50 border border-yellow-200 rounded-lg text-yellow-700">
                   <AlertCircle className="w-4 h-4" />
-                  <span className="text-13">Invalid OneDrive URL format</span>
+                  <span className="text-13">Invalid URL format. Please use OneDrive or Azure/SharePoint share link</span>
                 </div>
               )}
             </div>
