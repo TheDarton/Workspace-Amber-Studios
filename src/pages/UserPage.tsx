@@ -110,13 +110,13 @@ export function UserPage() {
 
         {sidebarOpen && (
           <div
-            className="lg:hidden fixed inset-0 bg-black/50 z-30"
+            className="lg:hidden fixed top-[57px] sm:top-[65px] inset-x-0 bottom-0 bg-black/50 z-30"
             onClick={() => setSidebarOpen(false)}
           />
         )}
 
         <aside className={`
-          fixed lg:relative inset-y-0 left-0 z-40 w-64 bg-white border-r border-gray-200 p-4 lg:p-6
+          fixed lg:relative top-[57px] sm:top-[65px] lg:top-0 bottom-0 left-0 z-40 w-64 bg-white border-r border-gray-200 p-4 lg:p-6
           transform transition-transform duration-200 ease-in-out
           ${sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
           overflow-y-auto
