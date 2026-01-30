@@ -22,7 +22,7 @@ export function Layout({ children }: LayoutProps) {
       : user?.login || '';
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="h-screen bg-gray-50 overflow-hidden">
       <header className="bg-white border-b border-gray-200 sticky top-0 z-50">
         <div className="px-4 sm:px-6 lg:px-8 py-3 sm:py-4 flex items-center justify-between">
           <div className="flex items-center gap-2 sm:gap-3 lg:gap-4 min-w-0">

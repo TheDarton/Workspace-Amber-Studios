@@ -92,7 +92,8 @@ function DailyTable({ statsData, filteredRows, selectedMonth, validDays }: Daily
         Daily Mistakes
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '380px 1fr', gridTemplateRows: 'auto 1fr' }}>
+      <div className="overflow-x-auto">
+        <div style={{ display: 'grid', gridTemplateColumns: '380px 1fr', gridTemplateRows: 'auto 1fr', minWidth: '800px' }}>
         <div className="bg-blue-100 border-l border-t border-gray-300">
           <div className="border-b border-r border-gray-300">
             <div className="px-3 py-2 text-lg font-semibold text-gray-700 h-[80px] flex items-center justify-center">
@@ -209,6 +210,7 @@ function DailyTable({ statsData, filteredRows, selectedMonth, validDays }: Daily
               </div>
             ))}
           </div>
+        </div>
         </div>
       </div>
     </div>

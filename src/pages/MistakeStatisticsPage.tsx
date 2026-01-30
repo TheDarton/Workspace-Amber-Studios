@@ -91,7 +91,8 @@ function CategoryTable({ category, statsData, filteredRows, selectedMonth }: Cat
         {category.name}
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '380px 1fr', gridTemplateRows: 'auto 1fr' }}>
+      <div className="overflow-x-auto">
+        <div style={{ display: 'grid', gridTemplateColumns: '380px 1fr', gridTemplateRows: 'auto 1fr', minWidth: '800px' }}>
         <div className="bg-blue-100 border-l border-t border-gray-300">
           <div className="border-b border-r border-gray-300">
             <div className="px-3 py-2 text-lg font-semibold text-gray-700 h-[216px] flex items-center justify-center">
@@ -199,6 +200,7 @@ function CategoryTable({ category, statsData, filteredRows, selectedMonth }: Cat
               </div>
             ))}
           </div>
+        </div>
         </div>
       </div>
     </div>
