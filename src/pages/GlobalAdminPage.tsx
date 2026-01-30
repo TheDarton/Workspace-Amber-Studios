@@ -9,6 +9,7 @@ import { MistakeStatisticsPage } from './MistakeStatisticsPage';
 import { TrainingAcademyPage } from './TrainingAcademyPage';
 import { NewsPage } from './NewsPage';
 import { VisibleMonthsConfig } from '../components/VisibleMonthsConfig';
+import { UserManagement } from '../components/UserManagement';
 import { useAuth } from '../contexts/useAuth';
 import { supabase } from '../lib/supabase';
 
@@ -317,6 +318,8 @@ export function GlobalAdminPage() {
     if (!country) return null;
 
     switch (activeSection) {
+      case 'users':
+        return <UserManagement countryId={country.id} countryName={country.name} />;
       case 'csv-config':
         return <VisibleMonthsConfig countryId={country.id} countryName={country.name} />;
       case 'schedule':
