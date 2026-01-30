@@ -100,33 +100,44 @@ export async function deleteTrainingMaterial(materialId: string): Promise<void> 
   if (error) throw error;
 }
 
-export function parseOneDriveUrl(url: string): string | null {
+export function parseOneDriveUrl(input: string): string | null {
   try {
+    const trimmedInput = input.trim();
+
+    // Check if input is an iframe embed code
+    if (trimmedInput.includes('<iframe') && trimmedInput.includes('</iframe>')) {
+      const srcMatch = trimmedInput.match(/src=["']([^"']+)["']/);
+      if (srcMatch && srcMatch[1]) {
+        return srcMatch[1];
+      }
+      return null;
+    }
+
     // Support personal OneDrive, short links, and corporate/Azure OneDrive (SharePoint)
-    const isOneDrive = url.includes('onedrive.live.com') ||
-                       url.includes('1drv.ms') ||
-                       url.includes('sharepoint.com') ||
-                       url.includes('-my.sharepoint.com');
+    const isOneDrive = trimmedInput.includes('onedrive.live.com') ||
+                       trimmedInput.includes('1drv.ms') ||
+                       trimmedInput.includes('sharepoint.com') ||
+                       trimmedInput.includes('-my.sharepoint.com');
 
     if (!isOneDrive) {
       return null;
     }
 
     // If already an embed URL, return as is
-    if (url.includes('embed?') || url.includes('embed.aspx')) {
-      return url;
+    if (trimmedInput.includes('embed?') || trimmedInput.includes('embed.aspx')) {
+      return trimmedInput;
     }
 
     // Convert view URL to embed URL for various formats
-    let embedUrl = url
+    let embedUrl = trimmedInput
       .replace('/view.aspx?', '/embed?')
       .replace('?web=1', '')
       .replace('/view?', '/embed?');
 
     // For SharePoint URLs, ensure proper embed format
-    if (url.includes('sharepoint.com')) {
+    if (trimmedInput.includes('sharepoint.com')) {
       // If it has resid parameter, it's likely already embeddable
-      if (url.includes('resid=') || url.includes('embed')) {
+      if (trimmedInput.includes('resid=') || trimmedInput.includes('embed')) {
         return embedUrl;
       }
       // Convert standard SharePoint share link to embed

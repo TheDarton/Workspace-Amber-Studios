@@ -49,13 +49,13 @@ export function BlockEditorModal({
 
     if (blockType === 'video' || blockType === 'video-text') {
       if (!videoUrl.trim()) {
-        setError('Video URL is required');
+        setError('Video URL or embed code is required');
         return;
       }
 
       const embedUrl = parseOneDriveUrl(videoUrl);
       if (!embedUrl) {
-        setError('Invalid URL. Please use a valid OneDrive or Azure/SharePoint share link.');
+        setError('Invalid input. Please paste either a OneDrive/SharePoint link or the full embed code from OneDrive.');
         return;
       }
     }
@@ -145,17 +145,17 @@ export function BlockEditorModal({
           {(blockType === 'video' || blockType === 'video-text') && (
             <div>
               <label className="block text-14 font-medium text-gray-700 mb-2">
-                OneDrive Video URL *
+                OneDrive Video URL or Embed Code *
               </label>
-              <input
-                type="url"
+              <textarea
                 value={videoUrl}
                 onChange={(e) => setVideoUrl(e.target.value)}
-                placeholder="https://onedrive.live.com/... or Azure/SharePoint link"
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#FFA500]"
+                placeholder="Paste either:&#10;1. OneDrive/SharePoint share link: https://...&#10;2. Full embed code: <iframe src=...></iframe>"
+                rows={3}
+                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#FFA500] resize-none font-mono text-13"
               />
               <p className="text-12 text-gray-500 mt-1">
-                Paste a OneDrive or Azure/SharePoint share link for your video
+                For corporate videos: In OneDrive/SharePoint, click "Embed" and paste the entire embed code here
               </p>
 
               {videoUrl && embedUrl && (
@@ -176,7 +176,7 @@ export function BlockEditorModal({
               {videoUrl && !embedUrl && (
                 <div className="mt-3 flex items-center gap-2 p-3 bg-yellow-50 border border-yellow-200 rounded-lg text-yellow-700">
                   <AlertCircle className="w-4 h-4" />
-                  <span className="text-13">Invalid URL format. Please use OneDrive or Azure/SharePoint share link</span>
+                  <span className="text-13">Invalid format. Paste either a OneDrive/SharePoint link or full embed code</span>
                 </div>
               )}
             </div>
