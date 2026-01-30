@@ -45,20 +45,22 @@ export default function WHTable({ data, userName }: WHTableProps) {
   const [hasHorizontalScroll, setHasHorizontalScroll] = useState(false);
 
   const allGroupedRows: GroupedRow[] = [];
+  const processedNames = new Set<string>();
 
-  for (let i = 0; i < data.rows.length; i++) {
-    const row = data.rows[i];
-    if (row.dayNight === 'Day hours') {
-      const nextRow = data.rows[i + 1];
-      const nightRow = nextRow?.dayNight === 'Night hours' ? nextRow : null;
+  for (const row of data.rows) {
+    if (row.dayNight === 'Day hours' && row.nameSurname && !processedNames.has(row.nameSurname)) {
+      processedNames.add(row.nameSurname);
+
+      const nightRow = data.rows.find(
+        r => r.nameSurname === row.nameSurname && r.dayNight === 'Night hours'
+      );
 
       allGroupedRows.push({
         name: row.nameSurname,
         dayRow: row,
-        nightRow,
+        nightRow: nightRow || null,
         sum: row.sum || '',
       });
-      if (nightRow) i++;
     }
   }
 

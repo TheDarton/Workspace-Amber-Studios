@@ -300,6 +300,7 @@ export function parseWHData(data: string[][]): WHData {
   }
 
   const rows: WHRow[] = [];
+  let currentPersonName = '';
 
   for (let i = 3; i < data.length; i++) {
     const row = data[i];
@@ -308,8 +309,12 @@ export function parseWHData(data: string[][]): WHData {
 
     if (!dayNight || (dayNight !== 'Day hours' && dayNight !== 'Night hours')) continue;
 
+    if (nameSurname) {
+      currentPersonName = nameSurname;
+    }
+
     const parsedRow: WHRow = {
-      nameSurname,
+      nameSurname: currentPersonName,
       dayNight: dayNight || '',
       hours: {},
       totalHours: '',
