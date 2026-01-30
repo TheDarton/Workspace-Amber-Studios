@@ -12,6 +12,7 @@ interface DailyTableProps {
   filteredRows: DailyStatsRow[];
   selectedMonth: string;
   validDays: number[];
+  userRole?: string;
 }
 
 function useScrollbarWidth() {
@@ -35,7 +36,7 @@ function useScrollbarWidth() {
   return scrollbarWidth;
 }
 
-function DailyTable({ statsData, filteredRows, selectedMonth, validDays }: DailyTableProps) {
+function DailyTable({ statsData, filteredRows, selectedMonth, validDays, userRole }: DailyTableProps) {
   const topRightRef = useRef<HTMLDivElement>(null);
   const bottomLeftRef = useRef<HTMLDivElement>(null);
   const bottomRightRef = useRef<HTMLDivElement>(null);
@@ -96,21 +97,23 @@ function DailyTable({ statsData, filteredRows, selectedMonth, validDays }: Daily
         <div style={{ display: 'grid', gridTemplateColumns: '380px 1fr', gridTemplateRows: 'auto 1fr', minWidth: '800px' }}>
         <div className="bg-blue-100 border-l border-t border-gray-300">
           <div className="border-b border-r border-gray-300">
-            <div className="px-3 py-2 text-lg font-semibold text-gray-700 h-[80px] flex items-center justify-center">
+            <div className={`px-3 py-2 text-lg font-semibold text-gray-700 flex items-center justify-center ${userRole === 'dealer' ? 'h-[40px]' : 'h-[80px]'}`}>
               <span>{selectedMonth}</span>
             </div>
           </div>
-          <div className="flex">
-            <div className="px-3 py-2 text-left text-sm font-medium text-gray-700 border-b border-r border-gray-300 bg-blue-100 whitespace-nowrap" style={{ width: '200px' }}>
-              Name Surname
+          {userRole !== 'dealer' && (
+            <div className="flex">
+              <div className="px-3 py-2 text-left text-sm font-medium text-gray-700 border-b border-r border-gray-300 bg-blue-100 whitespace-nowrap" style={{ width: '200px' }}>
+                Name Surname
+              </div>
+              <div className="px-3 py-2 text-left text-sm font-medium text-gray-700 border-b border-r border-gray-300 bg-blue-100" style={{ width: '100px' }}>
+                Nickname
+              </div>
+              <div className="px-3 py-2 text-center text-sm font-medium text-gray-700 border-b border-r border-gray-300 bg-blue-100" style={{ width: '80px' }}>
+                Total
+              </div>
             </div>
-            <div className="px-3 py-2 text-left text-sm font-medium text-gray-700 border-b border-r border-gray-300 bg-blue-100" style={{ width: '100px' }}>
-              Nickname
-            </div>
-            <div className="px-3 py-2 text-center text-sm font-medium text-gray-700 border-b border-r border-gray-300 bg-blue-100" style={{ width: '80px' }}>
-              Total
-            </div>
-          </div>
+          )}
         </div>
 
         <div className="flex border-t border-gray-300 overflow-hidden">
@@ -120,7 +123,7 @@ function DailyTable({ statsData, filteredRows, selectedMonth, validDays }: Daily
             onScroll={handleTopRightScroll}
           >
             <div style={{ width: `${dataContentWidth}px` }}>
-              <div className="flex border-b border-gray-300" style={{ height: '80px' }}>
+              <div className={`flex border-b border-gray-300 ${userRole === 'dealer' ? 'h-[40px]' : 'h-[80px]'}`}>
                 {validDays.map((day, idx) => {
                   const weekday = statsData.weekdays[day];
                   const weekend = isWeekend(weekday);
@@ -131,27 +134,31 @@ function DailyTable({ statsData, filteredRows, selectedMonth, validDays }: Daily
                       style={{ width: '60px' }}
                     >
                       <div className="text-lg font-semibold text-gray-800">{day}</div>
-                      <div className={`text-xs ${weekend ? 'text-red-600 font-medium' : 'text-gray-500'}`}>{weekday}</div>
+                      {userRole !== 'dealer' && (
+                        <div className={`text-xs ${weekend ? 'text-red-600 font-medium' : 'text-gray-500'}`}>{weekday}</div>
+                      )}
                     </div>
                   );
                 })}
               </div>
-              <div className="flex">
-                {validDays.map((day, idx) => {
-                  const weekday = statsData.weekdays[day];
-                  const weekend = isWeekend(weekday);
-                  const value = statsData.totalRow.days[day] || '0';
-                  return (
-                    <div
-                      key={day}
-                      className={`px-1 py-2 text-sm font-semibold text-gray-900 border-r border-b border-gray-300 text-center flex-shrink-0 ${idx === 0 ? 'border-l' : ''} ${weekend ? 'bg-red-100' : 'bg-gray-100'}`}
-                      style={{ width: '60px' }}
-                    >
-                      {value === '0' ? '-' : value}
-                    </div>
-                  );
-                })}
-              </div>
+              {userRole !== 'dealer' && (
+                <div className="flex">
+                  {validDays.map((day, idx) => {
+                    const weekday = statsData.weekdays[day];
+                    const weekend = isWeekend(weekday);
+                    const value = statsData.totalRow.days[day] || '0';
+                    return (
+                      <div
+                        key={day}
+                        className={`px-1 py-2 text-sm font-semibold text-gray-900 border-r border-b border-gray-300 text-center flex-shrink-0 ${idx === 0 ? 'border-l' : ''} ${weekend ? 'bg-red-100' : 'bg-gray-100'}`}
+                        style={{ width: '60px' }}
+                      >
+                        {value === '0' ? '-' : value}
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
             </div>
           </div>
           <div className="bg-gray-100" style={{ width: `${headerPaddingRight}px`, flexShrink: 0 }}></div>
@@ -357,6 +364,7 @@ export function DailyMistakesPage({ countryName, countryId }: { countryName: str
           filteredRows={filteredRows}
           selectedMonth={selectedMonth || ''}
           validDays={validDays}
+          userRole={user?.role}
         />
       ) : (
         <div className="bg-white rounded-lg border border-gray-200 p-8 text-center">
