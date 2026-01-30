@@ -36,6 +36,7 @@ export interface WHRow {
   dayNight: 'Day hours' | 'Night hours' | '';
   hours: Record<number, string>;
   totalHours: string;
+  sum: string;
   holiday: string;
 }
 

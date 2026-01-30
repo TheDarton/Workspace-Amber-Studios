@@ -285,6 +285,7 @@ export function parseWHData(data: string[][]): WHData {
   const year = row2[2] || '';
 
   const totalHoursIdx = headers.findIndex(h => h && h.toLowerCase().includes('total'));
+  const sumIdx = headers.findIndex(h => h && h.toLowerCase() === 'sum');
   const holidayIdx = headers.findIndex(h => h && h.toLowerCase().includes('holiday'));
 
   const dates: Record<number, number> = {};
@@ -312,6 +313,7 @@ export function parseWHData(data: string[][]): WHData {
       dayNight: dayNight || '',
       hours: {},
       totalHours: '',
+      sum: '',
       holiday: '',
     };
 
@@ -323,6 +325,7 @@ export function parseWHData(data: string[][]): WHData {
     }
 
     parsedRow.totalHours = totalHoursIdx >= 0 ? (row[totalHoursIdx] || '') : '';
+    parsedRow.sum = sumIdx >= 0 ? (row[sumIdx] || '') : '';
     parsedRow.holiday = holidayIdx >= 0 ? (row[holidayIdx] || '') : '';
 
     rows.push(parsedRow);
