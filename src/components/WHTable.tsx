@@ -10,6 +10,7 @@ interface GroupedRow {
   name: string;
   dayRow: WHData['rows'][0];
   nightRow: WHData['rows'][0] | null;
+  totalHours: string;
 }
 
 export default function WHTable({ data, userName }: WHTableProps) {
@@ -20,10 +21,16 @@ export default function WHTable({ data, userName }: WHTableProps) {
     if (row.dayNight === 'Day hours') {
       const nextRow = data.rows[i + 1];
       const nightRow = nextRow?.dayNight === 'Night hours' ? nextRow : null;
+
+      const dayHours = parseFloat(row.totalHours) || 0;
+      const nightHours = parseFloat(nightRow?.totalHours || '0') || 0;
+      const totalHours = (dayHours + nightHours).toString();
+
       allGroupedRows.push({
         name: row.nameSurname,
         dayRow: row,
         nightRow,
+        totalHours,
       });
       if (nightRow) i++;
     }
@@ -63,11 +70,11 @@ export default function WHTable({ data, userName }: WHTableProps) {
             <table className="w-full border-collapse">
               <thead>
                 <tr>
-                  <th className="px-2 py-2 text-xs sm:text-sm font-semibold bg-blue-100 border-b border-r border-gray-300 text-gray-700 w-20 sticky left-0 z-10">
-                    Day Night
-                  </th>
-                  <th className="px-2 py-2 text-xs sm:text-sm font-semibold bg-blue-100 border-b border-r border-gray-300 text-gray-700 w-16 sticky left-20 z-10">
+                  <th className="px-2 py-2 text-xs sm:text-sm font-semibold bg-blue-100 border-b border-r border-gray-300 text-gray-700 w-16 sticky left-0 z-10">
                     Total
+                  </th>
+                  <th className="px-2 py-2 text-xs sm:text-sm font-semibold bg-blue-100 border-b border-r border-gray-300 text-gray-700 w-20 sticky left-16 z-10">
+                    Day Night
                   </th>
                   {validDays.map((day) => {
                     const weekday = data.weekdays[day];
@@ -91,11 +98,11 @@ export default function WHTable({ data, userName }: WHTableProps) {
               </thead>
               <tbody>
                 <tr>
-                  <td className="px-2 py-2 text-xs sm:text-sm font-bold text-center bg-amber-50 border-b border-r border-gray-300 text-gray-700 sticky left-0 z-10">
-                    Day
-                  </td>
-                  <td className="px-2 py-2 text-xs sm:text-sm font-bold text-center bg-amber-50 border-b border-r border-gray-300 text-gray-900 sticky left-20 z-10">
+                  <td className="px-2 py-2 text-xs sm:text-sm font-bold text-center bg-amber-50 border-b border-r border-gray-300 text-gray-900 sticky left-0 z-10">
                     {group.dayRow.totalHours}
+                  </td>
+                  <td className="px-2 py-2 text-xs sm:text-sm font-bold text-center bg-amber-50 border-b border-r border-gray-300 text-gray-700 sticky left-16 z-10">
+                    Day
                   </td>
                   {validDays.map((day) => {
                     const weekday = data.weekdays[day];
@@ -116,11 +123,11 @@ export default function WHTable({ data, userName }: WHTableProps) {
                   })}
                 </tr>
                 <tr>
-                  <td className="px-2 py-2 text-xs sm:text-sm font-bold text-center bg-blue-100 border-r border-gray-300 text-gray-700 sticky left-0 z-10">
-                    Night
-                  </td>
-                  <td className="px-2 py-2 text-xs sm:text-sm font-bold text-center bg-blue-100 border-r border-gray-300 text-gray-900 sticky left-20 z-10">
+                  <td className="px-2 py-2 text-xs sm:text-sm font-bold text-center bg-blue-100 border-r border-gray-300 text-gray-900 sticky left-0 z-10">
                     {group.nightRow?.totalHours || '-'}
+                  </td>
+                  <td className="px-2 py-2 text-xs sm:text-sm font-bold text-center bg-blue-100 border-r border-gray-300 text-gray-700 sticky left-16 z-10">
+                    Night
                   </td>
                   {validDays.map((day) => {
                     const weekday = data.weekdays[day];
@@ -136,6 +143,33 @@ export default function WHTable({ data, userName }: WHTableProps) {
                         style={{ minWidth: '40px', width: '40px' }}
                       >
                         {hasValue ? value : '-'}
+                      </td>
+                    );
+                  })}
+                </tr>
+                <tr>
+                  <td className="px-2 py-2 text-xs sm:text-sm font-bold text-center bg-green-100 border-r border-gray-300 text-gray-900 sticky left-0 z-10">
+                    {group.totalHours}
+                  </td>
+                  <td className="px-2 py-2 text-xs sm:text-sm font-bold text-center bg-green-100 border-r border-gray-300 text-gray-700 sticky left-16 z-10">
+                    Total
+                  </td>
+                  {validDays.map((day) => {
+                    const weekday = data.weekdays[day];
+                    const weekend = isWeekend(weekday);
+                    const dayValue = parseFloat(group.dayRow.hours[day]) || 0;
+                    const nightValue = parseFloat(group.nightRow?.hours[day] || '0') || 0;
+                    const totalValue = dayValue + nightValue;
+                    const hasValue = totalValue > 0;
+                    return (
+                      <td
+                        key={day}
+                        className={`px-1 py-2 text-xs sm:text-sm text-center border-r border-gray-300 ${
+                          hasValue ? 'bg-green-50 font-semibold text-gray-900' : weekend ? 'bg-red-50/30' : 'bg-white'
+                        }`}
+                        style={{ minWidth: '40px', width: '40px' }}
+                      >
+                        {hasValue ? totalValue : '-'}
                       </td>
                     );
                   })}
