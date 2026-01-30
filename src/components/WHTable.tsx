@@ -70,10 +70,10 @@ export default function WHTable({ data, userName }: WHTableProps) {
             <table className="w-full border-collapse">
               <thead>
                 <tr>
-                  <th className="px-2 py-2 text-xs sm:text-sm font-semibold bg-blue-100 border-b border-r border-gray-300 text-gray-700 w-16 sticky left-0 z-10">
+                  <th className="px-3 py-2 text-sm font-semibold bg-blue-100 border-b border-r border-gray-300 text-gray-700 sticky left-0 z-10" style={{ width: '200px' }}>
                     Total
                   </th>
-                  <th className="px-2 py-2 text-xs sm:text-sm font-semibold bg-blue-100 border-b border-r border-gray-300 text-gray-700 w-20 sticky left-16 z-10">
+                  <th className="px-3 py-2 text-sm font-semibold bg-blue-100 border-b border-r border-gray-300 text-gray-700 sticky left-[200px] z-10" style={{ width: '100px' }}>
                     Day Night
                   </th>
                   {validDays.map((day) => {
@@ -98,10 +98,10 @@ export default function WHTable({ data, userName }: WHTableProps) {
               </thead>
               <tbody>
                 <tr>
-                  <td className="px-2 py-2 text-xs sm:text-sm font-bold text-center bg-amber-50 border-b border-r border-gray-300 text-gray-900 sticky left-0 z-10">
+                  <td className="px-3 py-2 text-sm font-bold text-center bg-amber-50 border-b border-r border-gray-300 text-gray-900 sticky left-0 z-10" style={{ width: '200px' }}>
                     {group.dayRow.totalHours}
                   </td>
-                  <td className="px-2 py-2 text-xs sm:text-sm font-bold text-center bg-amber-50 border-b border-r border-gray-300 text-gray-700 sticky left-16 z-10">
+                  <td className="px-3 py-2 text-sm font-bold text-center bg-amber-50 border-b border-r border-gray-300 text-gray-700 sticky left-[200px] z-10" style={{ width: '100px' }}>
                     Day
                   </td>
                   {validDays.map((day) => {
@@ -123,10 +123,10 @@ export default function WHTable({ data, userName }: WHTableProps) {
                   })}
                 </tr>
                 <tr>
-                  <td className="px-2 py-2 text-xs sm:text-sm font-bold text-center bg-blue-100 border-r border-gray-300 text-gray-900 sticky left-0 z-10">
+                  <td className="px-3 py-2 text-sm font-bold text-center bg-blue-100 border-r border-gray-300 text-gray-900 sticky left-0 z-10" style={{ width: '200px' }}>
                     {group.nightRow?.totalHours || '-'}
                   </td>
-                  <td className="px-2 py-2 text-xs sm:text-sm font-bold text-center bg-blue-100 border-r border-gray-300 text-gray-700 sticky left-16 z-10">
+                  <td className="px-3 py-2 text-sm font-bold text-center bg-blue-100 border-r border-gray-300 text-gray-700 sticky left-[200px] z-10" style={{ width: '100px' }}>
                     Night
                   </td>
                   {validDays.map((day) => {
@@ -148,10 +148,10 @@ export default function WHTable({ data, userName }: WHTableProps) {
                   })}
                 </tr>
                 <tr>
-                  <td className="px-2 py-2 text-xs sm:text-sm font-bold text-center bg-green-100 border-r border-gray-300 text-gray-900 sticky left-0 z-10">
+                  <td className="px-3 py-2 text-sm font-bold text-center bg-green-100 border-r border-gray-300 text-gray-900 sticky left-0 z-10" style={{ width: '200px' }}>
                     {group.totalHours}
                   </td>
-                  <td className="px-2 py-2 text-xs sm:text-sm font-bold text-center bg-green-100 border-r border-gray-300 text-gray-700 sticky left-16 z-10">
+                  <td className="px-3 py-2 text-sm font-bold text-center bg-green-100 border-r border-gray-300 text-gray-700 sticky left-[200px] z-10" style={{ width: '100px' }}>
                     Total
                   </td>
                   {validDays.map((day) => {
