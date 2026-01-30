@@ -35,6 +35,8 @@ export function ContentBlockDisplay({ block }: ContentBlockDisplayProps) {
               frameBorder="0"
               scrolling="no"
               allowFullScreen
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              sandbox="allow-scripts allow-same-origin allow-presentation allow-forms"
             />
           </div>
         ) : (
@@ -65,6 +67,8 @@ export function ContentBlockDisplay({ block }: ContentBlockDisplayProps) {
               frameBorder="0"
               scrolling="no"
               allowFullScreen
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              sandbox="allow-scripts allow-same-origin allow-presentation allow-forms"
             />
           </div>
         ) : (

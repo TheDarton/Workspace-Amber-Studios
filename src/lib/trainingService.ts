@@ -128,21 +128,36 @@ export function parseOneDriveUrl(input: string): string | null {
       return trimmedInput;
     }
 
-    // Convert view URL to embed URL for various formats
-    let embedUrl = trimmedInput
+    let embedUrl = trimmedInput;
+
+    // For SharePoint URLs, handle different formats
+    if (trimmedInput.includes('sharepoint.com')) {
+      // Convert /:v:/ (view) to /:e:/ (embed)
+      embedUrl = embedUrl.replace('/:v:/', '/:e:/');
+
+      // Convert view.aspx to embed.aspx
+      embedUrl = embedUrl.replace('/view.aspx?', '/embed.aspx?');
+
+      // Remove web=1 parameter
+      embedUrl = embedUrl.replace(/[?&]web=1/, '');
+
+      // Ensure embed action is present
+      if (!embedUrl.includes('action=embed')) {
+        if (embedUrl.includes('?')) {
+          embedUrl += '&action=embed';
+        } else {
+          embedUrl += '?action=embed';
+        }
+      }
+
+      return embedUrl;
+    }
+
+    // For personal OneDrive
+    embedUrl = embedUrl
       .replace('/view.aspx?', '/embed?')
       .replace('?web=1', '')
       .replace('/view?', '/embed?');
-
-    // For SharePoint URLs, ensure proper embed format
-    if (trimmedInput.includes('sharepoint.com')) {
-      // If it has resid parameter, it's likely already embeddable
-      if (trimmedInput.includes('resid=') || trimmedInput.includes('embed')) {
-        return embedUrl;
-      }
-      // Convert standard SharePoint share link to embed
-      embedUrl = embedUrl.replace('/:v:/', '/:e:/');
-    }
 
     return embedUrl;
   } catch {
